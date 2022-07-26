@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beast beautitemplate='MultiTypeBirthDeath' beautistatus='' namespace="lineageTree.substitutionmodel.ScarringLoss:beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
+
+<!-- syntactic sugar -->
+<map name="Uniform" >beast.math.distributions.Uniform</map>
+<map name="Exponential" >beast.math.distributions.Exponential</map>
+<map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
+<map name="Normal" >beast.math.distributions.Normal</map>
+<map name="Beta" >beast.math.distributions.Beta</map>
+<map name="Gamma" >beast.math.distributions.Gamma</map>
+<map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
+<map name="prior" >beast.math.distributions.Prior</map>
+<map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
+<map name="OneOnX" >beast.math.distributions.OneOnX</map>
+
+<!-- input data -->
+<data  id="s1_c1_data.txt" spec="Alignment" name="alignment">
+                       <userDataType spec="beast.evolution.datatype.ScarData"
+                     nrOfStates="3" />
+<sequence id="cell_1" spec="Sequence" taxon="1" value="1,2,0,1,1,0,1,2,1,0,"/>
+<sequence id="cell_2" spec="Sequence" taxon="2" value="1,0,0,1,1,0,1,2,1,0,"/>
+<sequence id="cell_3" spec="Sequence" taxon="3" value="1,0,0,1,1,0,1,2,1,0,"/>
+<sequence id="cell_4" spec="Sequence" taxon="4" value="1,0,0,1,1,0,1,2,1,0,"/>
+<sequence id="cell_5" spec="Sequence" taxon="5" value="2,2,0,1,1,0,1,1,1,0,"/>
+<sequence id="cell_6" spec="Sequence" taxon="6" value="2,2,0,1,2,0,1,1,1,0,"/>
+<sequence id="cell_8" spec="Sequence" taxon="7" value="1,0,1,2,2,0,2,2,1,0,"/>
+<sequence id="cell_9" spec="Sequence" taxon="8" value="1,0,1,2,2,0,2,2,1,0,"/>
+<sequence id="cell_10" spec="Sequence" taxon="9" value="2,0,0,1,1,0,1,1,1,0,"/>
+</data>
+
+<!-- define set of taxa based on alignment - cells in this context -->
+<taxa id="TaxonSet" spec="TaxonSet">
+    <alignment idref="s1_c1_data.txt"/>
+</taxa>
+
+<!-- specify tip dates, here 54h after the start of the experiment -->
+<traitSet id="dateTrait" spec="beast.evolution.tree.TraitSet" taxa="@TaxonSet" traitname="date-forward"
+	  value="1=54,2=54,3=54,4=54,5=54,6=54,7=54,8=54,9=54"/>
+
+
+  <substModel id="substModel"
+               spec="lineageTree.substitutionmodel.GeneralScarringLoss"
+               scarringRates="@scarringRate" lossRate="@lossRate"
+               scarringHeight="54" scarringDuration="36">
+    <frequencies spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1 0 0" estimate="false"/>
+  </substModel>
+
+  <siteModel spec="SiteModel" id="siteModel" mutationRate="@mutationRate" proportionInvariant="@proportionInvariant"
+              gammaCategoryCount="0" substModel="@substModel">
+  </siteModel>
+
+
+<run id="mcmc" spec="MCMC" chainLength="1000000000">
+
+    <!-- here the parameter of the model are defined that will be operated on (i.e. estimated) during the MCMC -->
+    <state id="state" spec="State" storeEvery="5000">
+
+            <stateNode id="tree"  spec="lineageTree.tree.startingTree" rootHeight="54"
+                       taxa="@s1_c1_data.txt" scarringHeight="54"
+                       scarringDuration="36" sequencesAreClustered="false">
+                <trait idref="dateTrait"/>
+                <taxonset idref="TaxonSet"/>
+            </stateNode>
+
+        <!-- find the definition of the scarring, loss rate and clock rate in the TiDeTree manuscript -->
+          <parameter id="scarringRate" spec="parameter.RealParameter"
+		     dimension="1" lower="0.0" name="stateNode"
+		     upper="1000"> 0.9 1
+          </parameter>
+        <parameter id="lossRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="1000"> 0.0</parameter>
+
+        <!-- the clock rate is the rate of aquiring scarred state 2 (i.e. the scarred state fixed to 1) -->
+        <parameter id="clockRate.c" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
+        <!-- the mutation rate could be another rate multiplier, but we leave it fixed to 1 -->
+        <parameter spec="parameter.RealParameter" estimate="false" id="mutationRate" name="stateNode">1.0</parameter>
+
+        <parameter spec="parameter.RealParameter" estimate="false" lower="0.0" id="proportionInvariant"
+                   name="stateNode" upper="1.0">0.0</parameter>
+
+        <!-- the following parameters belong to the extended birth-death sampling model by Stadler2013 -->
+        <!-- birth rate corresponds to cell division rate -->
+        <parameter id="birthRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="5">0.6</parameter>
+        <!-- death rate corresponds to apoptosis rate -->
+        <parameter id="deathRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="5">0.01</parameter>
+        <!-- sampling rate is a rate of sampling through time; since cells are only collected at single time point we set
+        this to 0 and specify the sampling proportion at present: rho -->
+        <parameter id="samplingRate" spec="parameter.RealParameter" lower="0.0" name="stateNode"
+		   upper="1.0"> 0 </parameter>
+        <parameter id="rho" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0"> 1.0</parameter>
+
+        <!-- The origin is the start of the population process (see Stadler2013), i.e. in most applications the time that passed
+         from the start of the experiment until the cells are sequenced. Here this is 54h. -->
+        <parameter id="origin" spec="parameter.RealParameter" name="stateNode" upper="54.0001">54.001</parameter>
+
+    </state>
+
+
+
+    <distribution id="posterior" spec="util.CompoundDistribution">
+
+        <!-- Prior distributions -->
+        <distribution id="prior" spec="util.CompoundDistribution">
+
+            <!-- The tree prior (or population dynamic model): the birth death sampling model -->
+                <distribution id="birthDeathSamplingModel" spec="beast.evolution.speciation.BirthDeathSkylineModel"
+                          conditionOnSurvival="True" tree="@tree" origin="@origin" contemp="true"
+                          birthRate="@birthRate" deathRate="@deathRate" rho="@rho"
+                          samplingRate="@samplingRate" >
+                </distribution>
+
+            <!-- prior distributions on the substitution model parameters -->
+            <prior id="ScarringRatePriorFast" name="distribution" x="@scarringRate" spec="bdmmprime.util.priors.SmartZeroExcludingPrior">
+                <LogNormal name="distr">
+                  <parameter  spec="parameter.RealParameter" estimate="false" name="M">-4.0</parameter>
+                  <parameter  spec="parameter.RealParameter" estimate="false" lower="0.0" name="S" upper="20.0">1.0</parameter>
+                </LogNormal>
+            </prior>
+
+            <prior id="ClockPrior.c:LTv2_EBd32_cluster_1" name="distribution" x="@clockRate.c">
+                <Uniform id="Uniform.0" name="distr" upper="Infinity"/>
+            </prior>
+
+
+            <!-- prior distributions on phylodynamic parameters -->
+            <!-- [0.4, 2.7] -->
+            <prior id="birthRatePrior" name="distribution" x="@birthRate" spec="bdmmprime.util.priors.SmartZeroExcludingPrior">
+                <LogNormal name="distr" M="0" S="0.6"/>
+            </prior>
+            <!-- [0.01, 1.4] -->
+            <prior id="deathRatePrior" name="distribution" x="@deathRate">
+               <LogNormal name="distr" M="-2" S="1.4"/>
+            </prior>
+        </distribution>
+
+        <!-- Tree likelihood -->
+        <distribution id="likelihood" spec="util.CompoundDistribution">
+
+                <distribution id="treeLikelihood"
+                              spec="lineageTree.distribution.organoidTreeLikelihood"
+                              data="@s1_c1_data.txt"
+			      tree="@tree"
+			      siteModel="@siteModel">
+                    <branchRateModel spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c"/>
+                </distribution>
+
+        </distribution>
+    </distribution>
+
+   <!-- tree operators -->
+           <operator  spec="lineageTree.operators.WilsonBaldingSubTrees"
+                      tree="@tree" weight="30.0" scarringStopHeight="18"/>
+
+            <operator  spec="Uniform" tree="@tree" weight="30.0"/>
+
+            <operator  spec="SubtreeSlide" tree="@tree" weight="3.0"/>
+            <operator spec="SubtreeSlide" tree="@tree" weight="3.0" size="30"/>
+            <operator  spec="Exchange" isNarrow="false" tree="@tree" weight="30.0"/>
+
+
+	<!-- Operators on phylogenetic parameters-->
+	<!-- scale all scarring rates but the one that is fixed to 1.0 -->
+	  <operator id="scarRateScaler" spec="bdmmprime.util.operators.SmartScaleOperator" parameter="@scarringRate"
+                scaleFactor="0.8" weight="3.0" classToExclude="1.0"/>
+    <operator id="clockRateScaler" spec="bdmmprime.util.operators.SmartScaleOperator" parameter="@clockRate.c"
+              scaleFactor="0.8" weight="3.0"/>
+
+
+   <!-- Operators on phylodynamic parameters -->
+    <operator id="birthRateScaler" spec="ScaleOperator" parameter="@birthRate" scaleFactor="0.8" weight="3.0"/>
+    <operator id="deathRateScaler" spec="ScaleOperator" parameter="@deathRate" scaleFactor="0.8" weight="3.0"/>
+
+    <operator id="updownBD.t:LTv2_EBd32_cluster_1" spec="UpDownOperator" scaleFactor="0.8" weight="30.0">
+         <up idref="birthRate"/>
+         <down idref="deathRate"/>
+    </operator>
+
+
+    <!-- Log parameters -->
+    <logger id="tracelog" spec="Logger" fileName="$(filebase).$(seed).log" logEvery="10000">
+        <log idref="posterior"/>
+        <log idref="likelihood"/>
+        <log idref="prior"/>
+        <log idref="treeLikelihood"/>
+        <log id="treeHeight"
+                 spec="beast.evolution.tree.TreeHeightLogger"
+                 tree="@tree"/>
+        <log id="treeLength"
+                 spec="multitypetree.util.TreeLengthLogger"
+                 tree="tree"/>
+        <log idref="scarringRate"/>
+        <log idref="lossRate" />
+        <log idref="clockRate.c"/>
+        <log idref="birthRate"/>
+        <log idref="rho"/>
+        <log idref="deathRate"/>
+    </logger>
+
+    <logger id="screenlog" spec="Logger" logEvery="1000">
+        <log idref="posterior"/>
+        <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+        <log idref="likelihood"/>
+        <log idref="prior"/>
+    </logger>
+
+
+    <!-- log tree -->
+    <logger id="treelog.t:cluster" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="10000" mode="tree">
+                <log idref="tree" printMetaData="true"/>
+    </logger>
+
+
+</run>
+
+</beast>
