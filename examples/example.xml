@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <beast beautitemplate='MultiTypeBirthDeath' beautistatus='' namespace="lineageTree.substitutionmodel.ScarringLoss:beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
 
+<!--
+This is an example xml that can be adapted to use TiDeTree on your data.
+In this example, a population of cells was grown for 54h. Editing was induced from
+time point 0 for 36h and 10 cells were sampled.
+
+Running the analysis infers the tree linking the 10 cells and the cells' division and death rate.
+
+Note that some words in this xml refer to time flowing either forward or backward.
+Forward time is used to count the hours from the start of the experiment (so some time in the past)
+toward the time when the cells were sampled. (e.g. in dateTrait, date-forward).
+Backward time or height counts the hours the other way around, i.e. the duration between when the cells where sampled
+and some time in the past. (e.g. the scarring height is the duration between sampling the cells and the time when
+scarring started.
+-->
+
 <!-- syntactic sugar -->
 <map name="Uniform" >beast.math.distributions.Uniform</map>
 <map name="Exponential" >beast.math.distributions.Exponential</map>
@@ -69,7 +84,7 @@
           </parameter>
         <parameter id="lossRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="1000"> 0.0</parameter>
 
-        <!-- the clock rate is the rate of aquiring scarred state 2 (i.e. the scarred state fixed to 1) -->
+        <!-- the clock rate is the rate of acquiring scarred state 2 (i.e. the scarred state fixed to 1) -->
         <parameter id="clockRate.c" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
         <!-- the mutation rate could be another rate multiplier, but we leave it fixed to 1 -->
         <parameter spec="parameter.RealParameter" estimate="false" id="mutationRate" name="stateNode">1.0</parameter>
