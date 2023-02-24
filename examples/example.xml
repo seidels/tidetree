@@ -30,7 +30,7 @@ scarring started.
 
 <!-- input data -->
 <data  id="s1_c1_data.txt" spec="Alignment" name="alignment">
-                       <userDataType spec="beast.evolution.datatype.ScarData"
+                       <userDataType spec="beast.evolution.datatype.EditData"
                      nrOfStates="3" />
 <sequence id="cell_1" spec="Sequence" taxon="1" value="1,2,0,1,1,0,1,2,1,0,"/>
 <sequence id="cell_2" spec="Sequence" taxon="2" value="1,0,0,1,1,0,1,2,1,0,"/>
