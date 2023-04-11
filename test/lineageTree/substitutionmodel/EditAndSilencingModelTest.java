@@ -3,7 +3,6 @@ package lineageTree.substitutionmodel;
 import beast.core.parameter.RealParameter;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.tree.Node;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,37 +12,37 @@ import java.util.stream.DoubleStream;
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 
-public class GSC_Test {
+public class EditAndSilencingModelTest {
 
-    GeneralScarringLoss scarringModel;
+    EditAndSilencingModel editModel;
 
     @Before
     public void setup(){
 
-        RealParameter lossRate = new RealParameter("1.0");
+        RealParameter silencingRate = new RealParameter("1.0");
         RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealParameter editHeight = new RealParameter("25.0");
+        RealParameter editDuration = new RealParameter("2.0");
 
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        scarringModel = new GeneralScarringLoss();
-        scarringModel.initByName("scarringRates", scarRates,
-                "lossRate", lossRate,
-                "scarringHeight", scarringHeight,
-                "scarringDuration", scarringDuration, "frequencies", frequencies);
+        editModel = new EditAndSilencingModel();
+        editModel.initByName("editRates", scarRates,
+                "silencingRate", silencingRate,
+                "editHeight", editHeight,
+                "editDuration", editDuration, "frequencies", frequencies);
     }
 
     @Test
     public void testRateMatrix(){
 
         //System.out.println("relative rates :\n" +
-        //        Arrays.toString(scarringModel.getRelativeRates()) + "\n");
+        //        Arrays.toString(editModel.getRelativeRates()) + "\n");
         System.out.println("rate matrix :");
-        double[][] rateM = scarringModel.getRateMatrix();
+        double[][] rateM = editModel.getRateMatrix();
         for(int i = 0; i < rateM.length; i++)
             System.out.println(Arrays.toString(rateM[i]));
 
@@ -52,12 +51,12 @@ public class GSC_Test {
         correctMatrix[0][0] = 0;
         for (int i=1; i<rateM.length-1; i++){
             // insert scar rates into first row
-            correctMatrix[0][i] = scarringModel.sRate.getValues()[i-1];
+            correctMatrix[0][i] = editModel.editRate_.getValues()[i-1];
 
             // insert loss rates into last column
-            correctMatrix[i-1][rateM.length-1] = scarringModel.lRate.getValue();
+            correctMatrix[i-1][rateM.length-1] = editModel.silencingRate_.getValue();
         }
-        correctMatrix[rateM.length-2][rateM.length-1] = scarringModel.lRate.getValue();
+        correctMatrix[rateM.length-2][rateM.length-1] = editModel.silencingRate_.getValue();
 
         for (int i=0; i<rateM.length; i++){
             assertArrayEquals("Assert matrix entries", correctMatrix[i], rateM[i], 1e-15);
@@ -73,11 +72,11 @@ public class GSC_Test {
         double endTime = 23;
         double rate = 1.0;
 
-        System.out.println("freqs = \n" + Arrays.toString(scarringModel.getFrequencies()) + "\n");
+        System.out.println("freqs = \n" + Arrays.toString(editModel.getFrequencies()) + "\n");
 
-        int len = scarringModel.getStateCount();
+        int len = editModel.getStateCount();
         double[] prob = new double[len*len];
-        scarringModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
+        editModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
 
         double[] correctMatrix = new double[]{
                 0.002478752176666, 0.066428265529973, 0.066428265529973, 0.864664716763387,
@@ -109,11 +108,11 @@ public class GSC_Test {
         double endTime = 0;
         double rate = 1.0;
 
-        System.out.println("freqs = \n" + Arrays.toString(scarringModel.getFrequencies()) + "\n");
+        System.out.println("freqs = \n" + Arrays.toString(editModel.getFrequencies()) + "\n");
 
-        int len = scarringModel.getStateCount();
+        int len = editModel.getStateCount();
         double[] prob = new double[len*len];
-        scarringModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
+        editModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
 
         double[] correctMatrix = new double[]{
                 0.135335283236613, 0, 0, 0.864664716763387,
@@ -140,22 +139,22 @@ public class GSC_Test {
     @Test
     public void test_different_parameters(){
 
-        //set up scarring model
-        RealParameter lossRate = new RealParameter("0.04");
+        //set up edit model
+        RealParameter silencingRate = new RealParameter("0.04");
         RealParameter scarRates = new RealParameter("10.0 20.0");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealParameter editHeight = new RealParameter("25.0");
+        RealParameter editDuration = new RealParameter("2.0");
 
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        scarringModel = new GeneralScarringLoss();
-        scarringModel.initByName("scarringRates", scarRates,
-                "lossRate", lossRate,
-                "scarringHeight", scarringHeight,
-                "scarringDuration", scarringDuration, "frequencies", frequencies);
+        editModel = new EditAndSilencingModel();
+        editModel.initByName("editRates", scarRates,
+                "silencingRate", silencingRate,
+                "editHeight", editHeight,
+                "editDuration", editDuration, "frequencies", frequencies);
 
         // set up time window
         double startTime = 25;
@@ -170,10 +169,10 @@ public class GSC_Test {
                 0, 0, 0, 1
         };
 
-        // retrieve transition probabilities from scarring model
-        int len = scarringModel.getStateCount();;
+        // retrieve transition probabilities from edit model
+        int len = editModel.getStateCount();;
         double[] prob = new double[len*len];
-        scarringModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
+        editModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
 
         // test correctness of transition probabilities
         System.out.println("\ntransition prob :\n" + Arrays.toString(prob));
@@ -199,21 +198,21 @@ public class GSC_Test {
     public void test_different_parameters2(){
 
         //set up scarring model
-        RealParameter lossRate = new RealParameter("0.0");
+        RealParameter silencingRate = new RealParameter("0.0");
         RealParameter scarRates = new RealParameter("10");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealParameter editHeight = new RealParameter("25.0");
+        RealParameter editDuration = new RealParameter("2.0");
 
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        scarringModel = new GeneralScarringLoss();
-        scarringModel.initByName("scarringRates", scarRates,
-                "lossRate", lossRate,
-                "scarringHeight", scarringHeight,
-                "scarringDuration", scarringDuration, "frequencies", frequencies);
+        editModel = new EditAndSilencingModel();
+        editModel.initByName("editRates", scarRates,
+                "silencingRate", silencingRate,
+                "editHeight", editHeight,
+                "editDuration", editDuration, "frequencies", frequencies);
 
         // set up time window
         double startTime = 25;
@@ -228,9 +227,9 @@ public class GSC_Test {
         };
 
         // retrieve transition probabilities from scarring model
-        int len = scarringModel.getStateCount();;
+        int len = editModel.getStateCount();;
         double[] prob = new double[len*len];
-        scarringModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
+        editModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
 
         // test correctness of transition probabilities
         System.out.println("\ntransition prob :\n" + Arrays.toString(prob));
@@ -254,21 +253,21 @@ public class GSC_Test {
     public void test_clock_rate(){
 
         //set up scarring model
-        RealParameter lossRate = new RealParameter("0.2");
+        RealParameter silencingRate = new RealParameter("0.2");
         RealParameter scarRates = new RealParameter("10");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealParameter editHeight = new RealParameter("25.0");
+        RealParameter editDuration = new RealParameter("2.0");
 
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        scarringModel = new GeneralScarringLoss();
-        scarringModel.initByName("scarringRates", scarRates,
-                "lossRate", lossRate,
-                "scarringHeight", scarringHeight,
-                "scarringDuration", scarringDuration, "frequencies", frequencies);
+        editModel = new EditAndSilencingModel();
+        editModel.initByName("editRates", scarRates,
+                "silencingRate", silencingRate,
+                "editHeight", editHeight,
+                "editDuration", editDuration, "frequencies", frequencies);
 
         // set up time window
         double startTime = 25;
@@ -283,9 +282,9 @@ public class GSC_Test {
         };
 
         // retrieve transition probabilities from scarring model
-        int len = scarringModel.getStateCount();;
+        int len = editModel.getStateCount();;
         double[] prob = new double[len*len];
-        scarringModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
+        editModel.getTransitionProbabilities(new Node(), startTime, endTime, rate, prob);
 
         // test correctness of transition probabilities
         System.out.println("\ntransition prob :\n" + Arrays.toString(prob));
