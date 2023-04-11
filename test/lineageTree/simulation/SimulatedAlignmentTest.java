@@ -3,15 +3,12 @@ package lineageTree.simulation;
 import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
-import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.StrictClockModel;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.tree.Node;
-import lineageTree.simulation.SimulatedAlignment;
 import beast.evolution.tree.Tree;
 import beast.util.TreeParser;
-import lineageTree.substitutionmodel.GeneralScarringLoss;
+import lineageTree.substitutionmodel.EditAndSilencingModel;
 import beast.evolution.datatype.ScarData;
 
 import org.junit.Test;
@@ -36,21 +33,21 @@ public class SimulatedAlignmentTest{
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
+        RealParameter silencingRate = new RealParameter("0.2");
         RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealParameter editHeight = new RealParameter("25.0");
+        RealParameter editDuration = new RealParameter("2.0");
 
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
-        scarringModel.initByName("scarringRates", scarRates,
-                "lossRate", lossRate,
-                "scarringHeight", scarringHeight,
-                "scarringDuration", scarringDuration, "frequencies", frequencies);
+        EditAndSilencingModel editAndSilencingModel = new EditAndSilencingModel();
+        editAndSilencingModel.initByName("editRates", scarRates,
+                "silencingRate", silencingRate,
+                "editHeight", editHeight,
+                "editDuration", editDuration, "frequencies", frequencies);
 
         RealParameter clock = new RealParameter("1.0");
         StrictClockModel branchModel = new StrictClockModel();
@@ -58,7 +55,7 @@ public class SimulatedAlignmentTest{
 
         // init site model
         SiteModel siteM = new SiteModel();
-        siteM.initByName( "gammaCategoryCount", 0, "substModel", scarringModel);
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", editAndSilencingModel);
 
 
         SimulatedAlignment simAlignment = new SimulatedAlignment();
@@ -78,8 +75,8 @@ public class SimulatedAlignmentTest{
 
     @Test
     /*
-    Test branch with parent above and child within scarring window
-    Adjust the scarring model to do so.
+    Test branch with parent above and child within edit window
+    Adjust the edit model to do so.
      */
     public void testBranchType10 (){
 
@@ -92,26 +89,26 @@ public class SimulatedAlignmentTest{
                 "(0[&cluster=0]:5.0)1[&cluster=0]:0.0",
                 "adjustTipHeights", false, "offset", 0);
 
-        //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
+        //init edit model
+        RealParameter silencingRate = new RealParameter("0.2");
         RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("3.0");
-        RealParameter scarringDuration = new RealParameter("3.0");
+        RealParameter editHeight = new RealParameter("3.0");
+        RealParameter editDuration = new RealParameter("3.0");
 
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
-        scarringModel.initByName("scarringRates", scarRates,
-                "lossRate", lossRate,
-                "scarringHeight", scarringHeight,
-                "scarringDuration", scarringDuration, "frequencies", frequencies);
+        EditAndSilencingModel editAndSilencingModel = new EditAndSilencingModel();
+        editAndSilencingModel.initByName("editRates", scarRates,
+                "silencingRate", silencingRate,
+                "editHeight", editHeight,
+                "editDuration", editDuration, "frequencies", frequencies);
 
         // init site model
         SiteModel siteM = new SiteModel();
-        siteM.initByName( "gammaCategoryCount", 0, "substModel", scarringModel);
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", editAndSilencingModel);
 
         // clock model
         RealParameter clock = new RealParameter("1.0");
@@ -141,26 +138,26 @@ public class SimulatedAlignmentTest{
                 "(0[&cluster=0]:5.0)1[&cluster=0]:0.0",
                 "adjustTipHeights", false, "offset", 0);
 
-        //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
+        //init edit model
+        RealParameter silencingRate = new RealParameter("0.2");
         RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("5.0");
-        RealParameter scarringDuration = new RealParameter("3.0");
+        RealParameter editHeight = new RealParameter("5.0");
+        RealParameter editDuration = new RealParameter("3.0");
 
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
-        scarringModel.initByName("scarringRates", scarRates,
-                "lossRate", lossRate,
-                "scarringHeight", scarringHeight,
-                "scarringDuration", scarringDuration, "frequencies", frequencies);
+        EditAndSilencingModel editAndSilencingModel = new EditAndSilencingModel();
+        editAndSilencingModel.initByName("editRates", scarRates,
+                "silencingRate", silencingRate,
+                "editHeight", editHeight,
+                "editDuration", editDuration, "frequencies", frequencies);
 
         // init site model
         SiteModel siteM = new SiteModel();
-        siteM.initByName( "gammaCategoryCount", 0, "substModel", scarringModel);
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", editAndSilencingModel);
 
         // clock model
         RealParameter clock = new RealParameter("1.0");
@@ -191,26 +188,26 @@ public class SimulatedAlignmentTest{
         ScarData scarDat = new ScarData();
         scarDat.initByName("nrOfStates", 3);
 
-        //init scarring model
-        RealParameter lossRate = new RealParameter("0.0");
+        //init edit model
+        RealParameter silencingRate = new RealParameter("0.0");
         RealParameter scarRates = new RealParameter("10.0");
-        RealParameter scarringHeight = new RealParameter("4.0");
-        RealParameter scarringDuration = new RealParameter("3.0");
+        RealParameter editHeight = new RealParameter("4.0");
+        RealParameter editDuration = new RealParameter("3.0");
 
         RealParameter freqs = new RealParameter("1.0 0 0");
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
-        scarringModel.initByName("scarringRates", scarRates,
-                "lossRate", lossRate,
-                "scarringHeight", scarringHeight,
-                "scarringDuration", scarringDuration, "frequencies", frequencies);
+        EditAndSilencingModel editAndSilencingModel = new EditAndSilencingModel();
+        editAndSilencingModel.initByName("editRates", scarRates,
+                "silencingRate", silencingRate,
+                "editHeight", editHeight,
+                "editDuration", editDuration, "frequencies", frequencies);
 
         // init site model
         SiteModel siteM = new SiteModel();
-        siteM.initByName( "gammaCategoryCount", 0, "substModel", scarringModel);
+        siteM.initByName( "gammaCategoryCount", 0, "substModel", editAndSilencingModel);
 
         // clock model
         RealParameter clock = new RealParameter("1.0");
