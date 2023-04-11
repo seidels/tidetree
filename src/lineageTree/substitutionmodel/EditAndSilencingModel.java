@@ -1,5 +1,6 @@
 package lineageTree.substitutionmodel;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
@@ -12,7 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-
+/**
+ * @author Sophie Seidel
+ **/
+@Description("Computes the transition probabilities from an unedited state into edited states or a silenced" +
+        "state.")
 public class EditAndSilencingModel extends SubstitutionModel.Base {
 
         final public Input<List<RealParameter>> editRatesInput = new Input<>("editRates",

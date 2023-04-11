@@ -7,7 +7,6 @@ import beast.core.util.Log;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.branchratemodel.BranchRateModel;
 import beast.evolution.branchratemodel.StrictClockModel;
-import beast.evolution.likelihood.BeerLikelihoodCore;
 import beast.evolution.likelihood.GenericTreeLikelihood;
 import beast.evolution.likelihood.LikelihoodCore;
 import beast.evolution.likelihood.TreeLikelihood;
@@ -16,14 +15,16 @@ import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.evolution.tree.TreeInterface;
-import lineageTree.substitutionmodel.GeneralScarringLoss;
+import lineageTree.substitutionmodel.EditAndSilencingModel;
 
 import java.util.Arrays;
 
-
+/**
+ * @author Sophie Seidel
+ **/
 @Description("This class calculates the tree likelihood, i.e. the probability of seeing an alignment given a tree under" +
-        "a scarring model")
-public class organoidTreeLikelihood extends GenericTreeLikelihood {
+        "an editing model")
+public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
 
     public Input<RealParameter> originInput = new Input<>("origin",
             "Start of the cell division process, usually start of the experiment.",
@@ -42,9 +43,9 @@ public class organoidTreeLikelihood extends GenericTreeLikelihood {
      * Since none of the inputs are StateNodes, it
      * is safe to link to them only once, during initAndValidate.
      */
-    protected GeneralScarringLoss substitutionModel;
-    protected double scarringStart;
-    protected double scarringStop;
+    protected EditAndSilencingModel substitutionModel;
+    protected double editStart;
+    protected double editStop;
     protected SiteModel.Base m_siteModel;
     protected BranchRateModel.Base branchRateModel;
     protected RealParameter origin;
@@ -117,7 +118,7 @@ public class organoidTreeLikelihood extends GenericTreeLikelihood {
         return likelihoodCore;
     }
 
-    public GeneralScarringLoss getSubstitutionModel() {return substitutionModel;}
+    public EditAndSilencingModel getSubstitutionModel() {return substitutionModel;}
 
     @Override
     public void initAndValidate() {
@@ -140,9 +141,9 @@ public class organoidTreeLikelihood extends GenericTreeLikelihood {
         Alignment alignment = dataInput.get();
         m_siteModel = (SiteModel.Base) siteModelInput.get();
         m_siteModel.setDataType(dataInput.get().getDataType());
-        substitutionModel = (GeneralScarringLoss) m_siteModel.substModelInput.get();
-        scarringStart = substitutionModel.getScarringHeight();
-        scarringStop = scarringStart - substitutionModel.getScarringDuration();
+        substitutionModel = (EditAndSilencingModel) m_siteModel.substModelInput.get();
+        editStart = substitutionModel.getEditHeight();
+        editStop = editStart - substitutionModel.getEditDuration();
 
         if (branchRateModelInput.get() != null) {
             branchRateModel = branchRateModelInput.get();
@@ -154,9 +155,9 @@ public class organoidTreeLikelihood extends GenericTreeLikelihood {
         int nrOfStates = substitutionModel.getStateCount();
         /*if (nrOfStates != dataInput.get().getMaxStateCount()){
             throw new IllegalArgumentException("The number of sequence states provided in userDataType \n" +
-                    " and the number of scarring rates +2 have to be equal! \n" +
+                    " and the number of edit rates +2 have to be equal! \n" +
                     "Number of sequence states: " + dataInput.get().getMaxStateCount() + "\n"+
-                    "Number of scarring rates +2: " + nrOfStates);
+                    "Number of edit rates +2: " + nrOfStates);
         }*/
         nrOfPatterns = dataInput.get().getPatternCount();
         nrOfMatrices = m_siteModel.getCategoryCount();
@@ -282,15 +283,15 @@ public class organoidTreeLikelihood extends GenericTreeLikelihood {
 
                 if (m_siteModel.integrateAcrossCategories()) {
 
-                    boolean parentBeforeChildrenAfterScarringHeight = (nodeHeight > scarringStart) &
-                            ((childHeight1 < scarringStart) | (childHeight2 < scarringStart));
-                    boolean parentBeforeChildrenAfterScarringStop = (nodeHeight > scarringStop) &
-                            ((childHeight1 < scarringStop) | (childHeight2 < scarringStop));
+                    boolean parentBeforeChildrenAfterEditHeight = (nodeHeight > editStart) &
+                            ((childHeight1 < editStart) | (childHeight2 < editStart));
+                    boolean parentBeforeChildrenAfterEditStop = (nodeHeight > editStop) &
+                            ((childHeight1 < editStop) | (childHeight2 < editStop));
 
-                    if (parentBeforeChildrenAfterScarringHeight | parentBeforeChildrenAfterScarringStop) {
+                    if (parentBeforeChildrenAfterEditHeight | parentBeforeChildrenAfterEditStop) {
 
                         likelihoodCore.calculatePartialsForCrossBranches(node, child1, child2,
-                                parentBeforeChildrenAfterScarringHeight, parentBeforeChildrenAfterScarringStop,
+                                parentBeforeChildrenAfterEditHeight, parentBeforeChildrenAfterEditStop,
                                 m_siteModel, substitutionModel, branchRate);
 
                     }else {
@@ -320,15 +321,15 @@ public class organoidTreeLikelihood extends GenericTreeLikelihood {
 
                         if (m_siteModel.integrateAcrossCategories()) {
 
-                            boolean parentBeforeChildrenAfterScarringHeight = (originHeight > scarringStart) &
-                                    (rootHeight < scarringStart);
-                            boolean parentBeforeChildrenAfterScarringStop = (originHeight > scarringStop) &
-                                    (rootHeight < scarringStop);
+                            boolean parentBeforeChildrenAfterEditHeight = (originHeight > editStart) &
+                                    (rootHeight < editStart);
+                            boolean parentBeforeChildrenAfterEditStop = (originHeight > editStop) &
+                                    (rootHeight < editStop);
 
-                            if (parentBeforeChildrenAfterScarringHeight | parentBeforeChildrenAfterScarringStop) {
+                            if (parentBeforeChildrenAfterEditHeight | parentBeforeChildrenAfterEditStop) {
 
                                 likelihoodCore.calculatePartialsForCrossBranches(originNode, node,
-                                        parentBeforeChildrenAfterScarringHeight, parentBeforeChildrenAfterScarringStop,
+                                        parentBeforeChildrenAfterEditHeight, parentBeforeChildrenAfterEditStop,
                                         m_siteModel, substitutionModel, branchRate);
 
                             }else {

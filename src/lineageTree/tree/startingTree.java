@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 /**
  * @author Sophie Seidel
  */
-@Description("This class generates a valid starting tree given an alignment and information on the scarring experiment.")
+@Description("This class generates a valid starting tree given an alignment and information on the editing experiment.")
 public class startingTree extends Tree implements StateNodeInitialiser {
     final public Input<Alignment> taxaInput = new Input<>("taxa", "set of taxa to initialise tree specified by alignment", Input.Validate.REQUIRED);
 

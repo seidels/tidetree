@@ -4,16 +4,12 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.branchratemodel.StrictClockModel;
-import beast.evolution.datatype.DataType;
-import beast.evolution.datatype.ScarData;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.tree.Node;
 import beast.evolution.tree.Tree;
 import beast.util.TreeParser;
-import feast.fileio.AlignmentFromNexus;
-import lineageTree.substitutionmodel.GeneralScarringLoss;
-import org.junit.Before;
+import lineageTree.substitutionmodel.EditAndSilencingModel;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -21,9 +17,9 @@ import static org.junit.Assert.assertEquals;
 
 public class OTL_Test {
 
-    organoidTreeLikelihood likelihood1, likelihood2, likelihood3;
+    TreeLikelihoodWithEditWindow likelihood1, likelihood2, likelihood3;
     Tree tree1, tree2, tree3, treeImpossible;
-    private organoidTreeLikelihood likelihood4, likelihoodNegInf;
+    private TreeLikelihoodWithEditWindow likelihood4, likelihoodNegInf;
 
     @Test
     public void testSingleTaxon() {
@@ -49,7 +45,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel = new EditAndSilencingModel();
         scarringModel.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -62,7 +58,7 @@ public class OTL_Test {
         // init branch rate model
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihood1 = new organoidTreeLikelihood();
+        likelihood1 = new TreeLikelihoodWithEditWindow();
         likelihood1.initByName("data", alignment, "tree", tree1,
                 "siteModel", siteM, "branchRateModel", clockModel);
 
@@ -97,7 +93,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel = new EditAndSilencingModel();
         scarringModel.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -110,7 +106,7 @@ public class OTL_Test {
         // init branch rate model
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihood1 = new organoidTreeLikelihood();
+        likelihood1 = new TreeLikelihoodWithEditWindow();
         likelihood1.initByName("data", alignment, "tree", tree1,
                 "siteModel", siteM, "branchRateModel", clockModel);
 
@@ -162,7 +158,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel = new EditAndSilencingModel();
         scarringModel.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -177,7 +173,7 @@ public class OTL_Test {
         // init branch rate model
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihood1 = new organoidTreeLikelihood();
+        likelihood1 = new TreeLikelihoodWithEditWindow();
         likelihood1.initByName("data", alignment, "tree", tree1,
                 "siteModel", siteM, "branchRateModel", clockModel);
 
@@ -229,7 +225,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel = new EditAndSilencingModel();
         scarringModel.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -242,7 +238,7 @@ public class OTL_Test {
         StrictClockModel clockModel = new StrictClockModel();
 
 
-        likelihood2 = new organoidTreeLikelihood();
+        likelihood2 = new TreeLikelihoodWithEditWindow();
         likelihood2.initByName("data", alignment2, "tree", tree2,
                 "siteModel", siteM, "branchRateModel", clockModel);
 
@@ -292,7 +288,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel3 = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel3 = new EditAndSilencingModel();
         scarringModel3.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -303,7 +299,7 @@ public class OTL_Test {
         siteM3.initByName( "gammaCategoryCount", 0, "substModel", scarringModel3);
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihood3 = new organoidTreeLikelihood();
+        likelihood3 = new TreeLikelihoodWithEditWindow();
         likelihood3.initByName("data", alignment3, "tree", tree3,
                 "siteModel", siteM3, "branchRateModel", clockModel);
 
@@ -360,7 +356,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel3 = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel3 = new EditAndSilencingModel();
         scarringModel3.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -371,7 +367,7 @@ public class OTL_Test {
         siteM3.initByName( "gammaCategoryCount", 0, "substModel", scarringModel3);
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihood3 = new organoidTreeLikelihood();
+        likelihood3 = new TreeLikelihoodWithEditWindow();
         likelihood3.initByName("data", alignment3, "tree", tree3,
                 "siteModel", siteM3, "branchRateModel", clockModel);
 
@@ -422,7 +418,7 @@ public class OTL_Test {
 
         RealParameter scarringHeight = new RealParameter("100.0");
         RealParameter scarringDuration = new RealParameter("100.0");
-        GeneralScarringLoss scarringModel4 = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel4 = new EditAndSilencingModel();
         scarringModel4.initByName("scarringRates", new RealParameter("0.01 0.01"),
                 "lossRate", new RealParameter("0.01"),
                 "scarringHeight", scarringHeight,
@@ -433,7 +429,7 @@ public class OTL_Test {
         StrictClockModel clockModel = new StrictClockModel();
 
         //init likelihood
-        likelihood4 = new organoidTreeLikelihood();
+        likelihood4 = new TreeLikelihoodWithEditWindow();
         likelihood4.initByName("data", alignment2, "tree", tree2,
                 "siteModel", siteM4, "branchRateModel", clockModel);
 
@@ -472,7 +468,7 @@ public class OTL_Test {
         RealParameter scarringHeight = new RealParameter("25.0");
         RealParameter scarringDuration = new RealParameter("0.0");
 
-        GeneralScarringLoss scarringModel4 = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel4 = new EditAndSilencingModel();
         scarringModel4.initByName("scarringRates", new RealParameter("0.01 0.01"),
                 "lossRate", new RealParameter("0.01"),
                 "scarringHeight", scarringHeight,
@@ -483,7 +479,7 @@ public class OTL_Test {
         StrictClockModel clockModel = new StrictClockModel();
 
         //init likelihood
-        likelihood4 = new organoidTreeLikelihood();
+        likelihood4 = new TreeLikelihoodWithEditWindow();
         likelihood4.initByName("data", alignment2, "tree", tree2,
                 "siteModel", siteM4, "branchRateModel", clockModel);
 
@@ -496,7 +492,7 @@ public class OTL_Test {
 
         scarringHeight.setValue(30.0);
         scarringDuration.setValue(2.0);
-        GeneralScarringLoss scarringModel4b = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel4b = new EditAndSilencingModel();
         scarringModel4b.initByName("scarringRates", new RealParameter("0.01 0.01"),
                 "lossRate", new RealParameter("0.01"),
                 "scarringHeight", scarringHeight,
@@ -546,7 +542,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel = new EditAndSilencingModel();
         scarringModel.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -559,7 +555,7 @@ public class OTL_Test {
         // init branch rate model
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihoodNegInf = new organoidTreeLikelihood();
+        likelihoodNegInf = new TreeLikelihoodWithEditWindow();
         likelihoodNegInf.initByName("data", alignment4, "tree", treeImpossible,
                 "siteModel", siteM, "branchRateModel", clockModel);
 
@@ -599,7 +595,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel = new EditAndSilencingModel();
         scarringModel.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -612,7 +608,7 @@ public class OTL_Test {
         // init branch rate model
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihoodNegInf = new organoidTreeLikelihood();
+        likelihoodNegInf = new TreeLikelihoodWithEditWindow();
         likelihoodNegInf.initByName("data", alignment, "tree", treeImpossible,
                 "siteModel", siteM, "branchRateModel", clockModel);
 
@@ -657,7 +653,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel = new EditAndSilencingModel();
         scarringModel.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -670,7 +666,7 @@ public class OTL_Test {
         // init branch rate model
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihoodNegInf = new organoidTreeLikelihood();
+        likelihoodNegInf = new TreeLikelihoodWithEditWindow();
         likelihoodNegInf.initByName("data", alignment, "tree", tree,
                 "siteModel", siteM, "branchRateModel", clockModel);
 
@@ -737,7 +733,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel = new EditAndSilencingModel();
         scarringModel.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -752,7 +748,7 @@ public class OTL_Test {
         // init branch rate model
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihoodNegInf = new organoidTreeLikelihood();
+        likelihoodNegInf = new TreeLikelihoodWithEditWindow();
         likelihoodNegInf.initByName("data", alignment, "tree", tree,
                 "siteModel", siteM, "branchRateModel", clockModel);
 
@@ -830,7 +826,7 @@ public class OTL_Test {
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        GeneralScarringLoss scarringModel = new GeneralScarringLoss();
+        EditAndSilencingModel scarringModel = new EditAndSilencingModel();
         scarringModel.initByName("scarringRates", scarRates,
                 "lossRate", lossRate,
                 "scarringHeight", scarringHeight,
@@ -845,7 +841,7 @@ public class OTL_Test {
         // init branch rate model
         StrictClockModel clockModel = new StrictClockModel();
 
-        likelihoodNegInf = new organoidTreeLikelihood();
+        likelihoodNegInf = new TreeLikelihoodWithEditWindow();
         likelihoodNegInf.initByName("data", alignment, "tree", tree,
                 "siteModel", siteM, "branchRateModel", clockModel, "origin", origin);
 

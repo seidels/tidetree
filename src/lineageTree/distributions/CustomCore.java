@@ -3,9 +3,13 @@ package lineageTree.distributions;
 import beast.evolution.likelihood.BeerLikelihoodCore;
 import beast.evolution.sitemodel.SiteModelInterface;
 import beast.evolution.tree.Node;
+import jdk.jfr.Description;
 import lineageTree.substitutionmodel.EditAndSilencingModel;
 
-
+/**
+ * @author Sophie Seidel
+ **/
+@Description("Contains methods to calculate the partial likelihoods.")
 public class CustomCore extends BeerLikelihoodCore {
 
 
