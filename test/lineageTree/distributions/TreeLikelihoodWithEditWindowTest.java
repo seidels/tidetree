@@ -15,7 +15,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-public class OTL_Test {
+public class TreeLikelihoodWithEditWindowTest {
 
     TreeLikelihoodWithEditWindow likelihood1, likelihood2, likelihood3;
     Tree tree1, tree2, tree3, treeImpossible;
