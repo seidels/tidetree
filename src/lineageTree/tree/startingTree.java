@@ -20,8 +20,8 @@ public class startingTree extends Tree implements StateNodeInitialiser {
     final public Input<Alignment> taxaInput = new Input<>("taxa", "set of taxa to initialise tree specified by alignment", Input.Validate.REQUIRED);
 
     final public Input<Double> rootHeightInput = new Input<>("rootHeight", "Time from beginning of the experiment until sequencing", Input.Validate.REQUIRED);
-    final public Input<Double> scarringDurationInput = new Input<>("scarringDuration", "Time duration from scarring start to scarring stop", Input.Validate.REQUIRED);
-    final public Input<Double> scarringHeightInput = new Input<>("scarringHeight", "Time from the onset of scarring until sequencing", Input.Validate.REQUIRED);
+    final public Input<Double> editDurationInput = new Input<>("editDuration", "Time duration from edit start to edit stop", Input.Validate.REQUIRED);
+    final public Input<Double> editHeightInput = new Input<>("editHeight", "Time from the onset of edit until sequencing", Input.Validate.REQUIRED);
     final public Input<Boolean> sequencesAreClusteredInput = new Input<>("sequencesAreClustered", "Is true, if identical sequences appear in clusters within the alignment", true, Input.Validate.REQUIRED);
     final public Input<Integer> nClustersInput =  new Input<>("nClusters", "Number of clusters, where each cluster consists of identical sequences. " +
             "This input is only used when sequences are clustered.");
@@ -30,8 +30,8 @@ public class startingTree extends Tree implements StateNodeInitialiser {
     int[][] matchMatrix; // matrix indicating if taxa have identical sequences
     int[] taxaInTree; // vector indicating if taxa have (1) or have not (0) already been included in the tree
     int nClusters; // cluster is a set of identical sequences
-    double scarringHeight;
-    double scarringDuration;
+    double editHeight;
+    double editDuration;
     double rootHeight;
     int nTaxa;
     Alignment taxa;
@@ -49,11 +49,11 @@ public class startingTree extends Tree implements StateNodeInitialiser {
         iIntNode = nTaxa;
 
         rootHeight = rootHeightInput.get();
-        scarringDuration = scarringDurationInput.get();
-        scarringHeight = scarringHeightInput.get();
+        editDuration = editDurationInput.get();
+        editHeight = editHeightInput.get();
 
-        if (scarringHeight > rootHeight){
-            throw new RuntimeException("ScarringHeight has to be smaller or equal than rootHeight");
+        if (editHeight > rootHeight){
+            throw new RuntimeException("editHeight has to be smaller or equal than rootHeight");
         }
 
         // number of clusters is only known a priory if sequences are clustered in the alignment
@@ -77,7 +77,7 @@ public class startingTree extends Tree implements StateNodeInitialiser {
     @Override
     public void initStateNodes() {
 
-        root = get_tree(rootHeight, scarringHeight, taxa, nClusters, matchMatrix);
+        root = get_tree(rootHeight, editHeight, taxa, nClusters, matchMatrix);
 
         leafNodeCount = nTaxa;
         nodeCount = leafNodeCount *2 -1 ;
@@ -169,23 +169,23 @@ public class startingTree extends Tree implements StateNodeInitialiser {
 
     /**
      * Builds subtree for identical sequences where the parent of the subtree is below the
-     * scarring stop. The internal nodes between the present and the scarring stop
+     * edit stop. The internal nodes between the present and the edit stop
      * are placed at equal intervals (divTimes) and then scaled by a random number (0,1] to
      * to prevent 2 internal nodes in different cluster trees to be places at the same height.
      * @param iTaxon i-th taxon
-     * @param scarringStop time after which no scarring events are allowed to occur.
+     * @param editStop time after which no edit events are allowed to occur.
      * @param taxa alignment
      * @param iCluster i-th cluster
      * @return subtree of identical sequences
      */
-    private Node get_cluster_tree(int iTaxon, double scarringStop, Alignment taxa, int iCluster){
+    private Node get_cluster_tree(int iTaxon, double editStop, Alignment taxa, int iCluster){
         int nMatches = IntStream.of(matchMatrix[iTaxon]).sum();
         int[] matches = get_matching_taxa(nMatches, iTaxon);
         double divTimes;
         if(nMatches != 0){
-            divTimes =  scarringStop / nMatches;
+            divTimes =  editStop / nMatches;
         }else{
-            divTimes = scarringStop;
+            divTimes = editStop;
         }
         List<String> taxaNames = taxa.getTaxaNames();
 
@@ -212,7 +212,7 @@ public class startingTree extends Tree implements StateNodeInitialiser {
 
             //set up parent node
             Node parent = new Node();
-            // space internal nodes at unequal intervals until scarringHeight
+            // space internal nodes at unequal intervals until editHeight
             double height = divTimes * (iMatch+1) - Randomizer.uniform(0.01, 0.09);
             parent.setHeight(height);// * Randomizer.nextDouble());
             parent.setNr(iIntNode);
@@ -252,14 +252,14 @@ public class startingTree extends Tree implements StateNodeInitialiser {
 
     /**
      * Build starting tree from sequences. The root height is given by the length of the experiment and fixed. The
-     * scarring height indicates when scarring of the sequences starts. The scarring duration marks the scarring stop,
+     * edit height indicates when edit of the sequences starts. The edit duration marks the edit stop,
      * the time when no more scars are allowed to be acccumulated. (For more, see @General In this tree, all taxa with identical sequences are clustered in a
-     * subtree (also called clusterTree) below the scarring stop. This is done to ensure that the tree log likelihood
+     * subtree (also called clusterTree) below the edit stop. This is done to ensure that the tree log likelihood
      * does not evaluate to -Infinity.
      *
      * The codes takes a starting taxon and generates a subtree of matching taxa (i.e. taxa with the same sequence) for
      * it. Then, the next taxon (i-th taxon) with a different sequence is taken and, again, a subtree of its matching
-     * taxa is created. These subtrees are joined by a parent node above the scarring stop. Then, the procedure
+     * taxa is created. These subtrees are joined by a parent node above the edit stop. Then, the procedure
      * continues for the next taxon with a different sequence.
      *
      * Hence, this methods relies on finding taxa with identical sequences and the next taxon with a different sequence.
@@ -273,13 +273,13 @@ public class startingTree extends Tree implements StateNodeInitialiser {
      * included in the tree we use the variable taxaInTree.
      *
      * @param rootHeight
-     * @param scarringHeight
+     * @param editHeight
      * @param taxa
      * @param nClusters
      * @param matchMatrix
      * @return starting tree
      */
-    public Node get_tree(double rootHeight, double scarringHeight, Alignment taxa, int nClusters, int[][] matchMatrix){
+    public Node get_tree(double rootHeight, double editHeight, Alignment taxa, int nClusters, int[][] matchMatrix){
 
         if(nTaxa == 1){
             int onlyTaxon = 0;
@@ -305,11 +305,11 @@ public class startingTree extends Tree implements StateNodeInitialiser {
         int iCluster = 0;
 
         // time between the internal nodes connecting the cluster trees
-        double divTime = (rootHeight - scarringHeight) / nClusters;
+        double divTime = (rootHeight - editHeight) / nClusters;
 
-        double scarringStop = scarringHeight - scarringDuration;
+        double editStop = editHeight - editDuration;
         // get left subtree
-        Node subtreeLeft = get_cluster_tree(iTaxon, scarringStop, taxa, iCluster);
+        Node subtreeLeft = get_cluster_tree(iTaxon, editStop, taxa, iCluster);
 
         // update iTaxon to next cluster start
         iCluster++;
@@ -319,7 +319,7 @@ public class startingTree extends Tree implements StateNodeInitialiser {
         while (iTaxon < nTaxa){
 
             // get right subtree
-            Node subtreeRight = get_cluster_tree(iTaxon, scarringStop, taxa, iCluster);
+            Node subtreeRight = get_cluster_tree(iTaxon, editStop, taxa, iCluster);
             iCluster++;
             if(iCluster > nClusters){
                 throw new RuntimeException("The number of clusters is larger than specified!");
@@ -328,7 +328,7 @@ public class startingTree extends Tree implements StateNodeInitialiser {
 
             // get parent
             Node parent = new Node();
-            parent.setHeight(scarringHeight + iCluster * divTime);
+            parent.setHeight(editHeight + iCluster * divTime);
             // Number of nodes in the final tree - number of nodes that have yet to be created
             parent.setNr(iIntNode);
             parent.addChild(subtreeLeft);
@@ -345,7 +345,7 @@ public class startingTree extends Tree implements StateNodeInitialiser {
         if (iTaxon > nTaxa){
             //throw new RuntimeException("iTaxon reached " + iTaxon + " but it should never exceed the number of sequences: " + nTaxa + "!");
         }
-        // MRCA height for starting tree should be above scarring window in case scars are present in alignment
+        // MRCA height for starting tree should be above edit window in case scars are present in alignment
         subtreeLeft.setHeight(rootHeight);
         return subtreeLeft;
     }
