@@ -1,19 +1,16 @@
 package lineageTree.distributions;
 
-import beast.core.Input;
 import beast.evolution.likelihood.BeerLikelihoodCore;
-import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.sitemodel.SiteModelInterface;
-import beast.evolution.substitutionmodel.SubstitutionModel;
 import beast.evolution.tree.Node;
-import lineageTree.substitutionmodel.GeneralScarringLoss;
+import lineageTree.substitutionmodel.EditAndSilencingModel;
 
 
 public class CustomCore extends BeerLikelihoodCore {
 
 
-    private double scarringStart;
-    private double scarringStop;
+    private double editStart;
+    private double editStop;
     
     public CustomCore(int nrOfStates) {
         super(nrOfStates);
@@ -29,13 +26,13 @@ public class CustomCore extends BeerLikelihoodCore {
      */
 
     public void initialize(int nodeCount, int patternCount, int matrixCount, boolean integrateCategories, boolean useAmbiguities,
-                           GeneralScarringLoss substitutionModel, SiteModelInterface.Base m_siteModel) {
+                           EditAndSilencingModel substitutionModel, SiteModelInterface.Base m_siteModel) {
 
         super.initialize(nodeCount, patternCount, matrixCount, integrateCategories, useAmbiguities);
         
         
-        this.scarringStart = substitutionModel.getScarringHeight();
-        this.scarringStop = scarringStart - substitutionModel.getScarringDuration();
+        this.editStart = substitutionModel.getEditHeight();
+        this.editStop = editStart - substitutionModel.getEditDuration();
     }
 
     /**
@@ -112,7 +109,7 @@ public class CustomCore extends BeerLikelihoodCore {
 
 
     void calculatePartialsForCrossBranches(Node parent, Node child1, Node child2, boolean bool1, boolean bool2,
-                                           SiteModelInterface.Base m_siteModel, GeneralScarringLoss substitutionModel,
+                                           SiteModelInterface.Base m_siteModel, EditAndSilencingModel substitutionModel,
                                            double branchRate){
 
         double[] nodePartials = new double[partialsSize];
@@ -142,44 +139,44 @@ public class CustomCore extends BeerLikelihoodCore {
         int nIntermediateNodes;
         double[] intNodeTimes;
 
-        boolean [] parentBeforeChildAfterScarringStart = new boolean[] {
-                (parent.getHeight() > scarringStart) & (child1.getHeight() < scarringStart),
-                (parent.getHeight() > scarringStart) & (child2.getHeight() < scarringStart)
+        boolean [] parentBeforeChildAfterEditStart = new boolean[] {
+                (parent.getHeight() > editStart) & (child1.getHeight() < editStart),
+                (parent.getHeight() > editStart) & (child2.getHeight() < editStart)
         };
-        boolean [] parentBeforeChildAfterScarringStop = new boolean[]{
-                (parent.getHeight() > scarringStop) & (child1.getHeight() < scarringStop),
-                (parent.getHeight() > scarringStop) & (child2.getHeight() < scarringStop)
+        boolean [] parentBeforeChildAfterEditStop = new boolean[]{
+                (parent.getHeight() > editStop) & (child1.getHeight() < editStop),
+                (parent.getHeight() > editStop) & (child2.getHeight() < editStop)
         };
 
         // for each child calculate partials upwards until the helper node below the parent
         // that's only necessary if the rate matrix changes on the branch!
         for (int i=0; i< children.length; i++){
 
-            // if parent above scarring window (sw), child in sw
-            if (parentBeforeChildAfterScarringStart[i] & !parentBeforeChildAfterScarringStop[i]){
+            // if parent above edit window (sw), child in sw
+            if (parentBeforeChildAfterEditStart[i] & !parentBeforeChildAfterEditStop[i]){
                 nIntermediateNodes = 1;
-                intNodeTimes = new double[]{children[i].getHeight(), scarringStart, Double.NEGATIVE_INFINITY};
-                heightsBeforeParent[i] = scarringStart;
+                intNodeTimes = new double[]{children[i].getHeight(), editStart, Double.NEGATIVE_INFINITY};
+                heightsBeforeParent[i] = editStart;
                 needsIntermediates[i] = true;
 
                 helperNodePartials[i * 2 + 1] = calculatePartialsBeforeParent(parent, children[i], i, childIndices[i],
                         intNodeTimes, jointbranchRates[i], nIntermediateNodes, helperNodePartials, substitutionModel);
 
                 // if parent in sw and child below sw
-            }else if(!parentBeforeChildAfterScarringStart[i] & parentBeforeChildAfterScarringStop[i]){
+            }else if(!parentBeforeChildAfterEditStart[i] & parentBeforeChildAfterEditStop[i]){
                 nIntermediateNodes = 1;
-                intNodeTimes = new double[]{children[i].getHeight(), scarringStop, Double.NEGATIVE_INFINITY};
-                heightsBeforeParent[i] = scarringStop;
+                intNodeTimes = new double[]{children[i].getHeight(), editStop, Double.NEGATIVE_INFINITY};
+                heightsBeforeParent[i] = editStop;
                 needsIntermediates[i] = true;
 
                 helperNodePartials[i * 2 + 1] = calculatePartialsBeforeParent(parent, children[i], i, childIndices[i],
                         intNodeTimes, jointbranchRates[i], nIntermediateNodes, helperNodePartials, substitutionModel);
 
                 // if parent above sw and child below sw
-            }else if (parentBeforeChildAfterScarringStart[i] & parentBeforeChildAfterScarringStop[i]){
+            }else if (parentBeforeChildAfterEditStart[i] & parentBeforeChildAfterEditStop[i]){
                 nIntermediateNodes = 2;
-                intNodeTimes = new double[]{children[i].getHeight(), scarringStop, scarringStart};
-                heightsBeforeParent[i] = scarringStart;
+                intNodeTimes = new double[]{children[i].getHeight(), editStop, editStart};
+                heightsBeforeParent[i] = editStart;
                 needsIntermediates[i] = true;
 
                 helperNodePartials[i * 2 + 1] = calculatePartialsBeforeParent(parent, children[i], i, childIndices[i],
@@ -301,7 +298,7 @@ public class CustomCore extends BeerLikelihoodCore {
     }
 
     void calculatePartialsForCrossBranches(Node parent, Node child, boolean bool1, boolean bool2,
-                                           SiteModelInterface.Base m_siteModel, GeneralScarringLoss substitutionModel,
+                                           SiteModelInterface.Base m_siteModel, EditAndSilencingModel substitutionModel,
                                            double branchRate){
 
         double[] nodePartials = new double[partialsSize];
@@ -326,40 +323,40 @@ public class CustomCore extends BeerLikelihoodCore {
         int nIntermediateNodes;
         double[] intNodeTimes;
 
-        boolean  parentBeforeChildAfterScarringStart =
-                (parent.getHeight() > scarringStart) & (child.getHeight() < scarringStart);
-        boolean parentBeforeChildAfterScarringStop =
-                (parent.getHeight() > scarringStop) & (child.getHeight() < scarringStop);
+        boolean  parentBeforeChildAfterEditStart =
+                (parent.getHeight() > editStart) & (child.getHeight() < editStart);
+        boolean parentBeforeChildAfterEditStop =
+                (parent.getHeight() > editStop) & (child.getHeight() < editStop);
 
         // calculate partials upwards until the helper node below the parent
         // that's only necessary if the rate matrix changes on the branch!
 
 
-        // if parent above scarring window (sw), child in sw
-        if (parentBeforeChildAfterScarringStart & !parentBeforeChildAfterScarringStop){
+        // if parent above edit window (sw), child in sw
+        if (parentBeforeChildAfterEditStart & !parentBeforeChildAfterEditStop){
                 nIntermediateNodes = 1;
-                intNodeTimes = new double[]{child.getHeight(), scarringStart, Double.NEGATIVE_INFINITY};
-                heightsBeforeParent = scarringStart;
+                intNodeTimes = new double[]{child.getHeight(), editStart, Double.NEGATIVE_INFINITY};
+                heightsBeforeParent = editStart;
                 needsIntermediates = true;
 
                 helperNodePartials[1] = calculatePartialsBeforeParent(parent, child, 0, childIndx,
                         intNodeTimes, jointBranchRates, nIntermediateNodes, helperNodePartials, substitutionModel);
 
                 // if parent in sw and child below sw
-        }else if(!parentBeforeChildAfterScarringStart & parentBeforeChildAfterScarringStop){
+        }else if(!parentBeforeChildAfterEditStart & parentBeforeChildAfterEditStop){
                 nIntermediateNodes = 1;
-                intNodeTimes = new double[]{child.getHeight(), scarringStop, Double.NEGATIVE_INFINITY};
-                heightsBeforeParent = scarringStop;
+                intNodeTimes = new double[]{child.getHeight(), editStop, Double.NEGATIVE_INFINITY};
+                heightsBeforeParent = editStop;
                 needsIntermediates = true;
 
                 helperNodePartials[1] = calculatePartialsBeforeParent(parent, child, 0, childIndx,
                         intNodeTimes, jointBranchRates, nIntermediateNodes, helperNodePartials, substitutionModel);
 
                 // if parent above sw and child below sw
-        }else if (parentBeforeChildAfterScarringStart & parentBeforeChildAfterScarringStop){
+        }else if (parentBeforeChildAfterEditStart & parentBeforeChildAfterEditStop){
                 nIntermediateNodes = 2;
-                intNodeTimes = new double[]{child.getHeight(), scarringStop, scarringStart};
-                heightsBeforeParent = scarringStart;
+                intNodeTimes = new double[]{child.getHeight(), editStop, editStart};
+                heightsBeforeParent = editStart;
                 needsIntermediates = true;
 
                 helperNodePartials[1] = calculatePartialsBeforeParent(parent, child, 0, childIndx,
@@ -407,10 +404,10 @@ public class CustomCore extends BeerLikelihoodCore {
     }
 
     double[] calculatePartialsBeforeParent(Node parent, Node child, int i, int childIndex, double[] intNodeTimes, double[] jointBranchRates, int nIntermediateNodes, double[][] helperNodePartials,
-                                           GeneralScarringLoss substitutionModel) {
+                                           EditAndSilencingModel substitutionModel) {
 
         double [] matrix = new double[nrOfMatrices * matrixSize];
-        double[] probs = new double[matrixSize]; //TODO!! why is this +1??
+        double[] probs = new double[matrixSize];
 
         if (child.isLeaf()) {
             int[] states = new int[nrOfPatterns];
