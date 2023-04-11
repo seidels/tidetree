@@ -34,7 +34,7 @@ import beast.util.Randomizer;
 import feast.nexus.CharactersBlock;
 import feast.nexus.NexusBuilder;
 import feast.nexus.TaxaBlock;
-import lineageTree.substitutionmodel.GeneralScarringLoss;
+import lineageTree.substitutionmodel.EditAndSilencingModel;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
@@ -44,7 +44,8 @@ import java.util.List;
 
 /**
  * @author Sophie Seidel
- * Most of the code is from feast SimulatedAlignment by Tim Vaughan
+ * Adapted from feast's SimulatedAlignment class by Tim Vaughan
+ * Main change is to introduce the editing window into the simulation
  */
 @Description("A more flexible alignment simulator. Doesn't require " +
         "pre-specification of number of taxa.")
@@ -190,9 +191,9 @@ public class SimulatedAlignment extends Alignment {
 
 
         // get scarring time boundaries
-        GeneralScarringLoss scarringModel = (GeneralScarringLoss)siteModel.getSubstitutionModel();
-        double scarringStart = scarringModel.getScarringHeight();
-        double scarringStop = scarringStart -  scarringModel.getScarringDuration();
+        EditAndSilencingModel scarringModel = (EditAndSilencingModel)siteModel.getSubstitutionModel();
+        double scarringStart = scarringModel.getEditHeight();
+        double scarringStop = scarringStart -  scarringModel.getEditDuration();
 
         // if the process started at the origin and root is after the onset of scarring,
         // evolve parentSeq from origin to root
