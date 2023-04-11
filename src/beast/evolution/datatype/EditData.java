@@ -4,6 +4,9 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.evolution.datatype.DataType.Base;
 
+/**
+ * @author Sophie Seidel
+ */
 @Description("Datatype for integer sequence representing the barcode states. The state 0 is unedited, " +
         "states 1, ..., N-1 represent particular indels, state N represents the silenced state.")
 public class EditData extends Base {
