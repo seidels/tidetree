@@ -1,19 +1,12 @@
 package lineageTree.tree;
 
-import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.alignment.TaxonSet;
 import beast.evolution.datatype.ScarData;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.TraitSet;
 import beast.util.Randomizer;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-
-import java.util.Random;
 
 import static junit.framework.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
@@ -21,8 +14,8 @@ import static org.junit.Assert.assertArrayEquals;
 public class StartingTreeTest {
 
     private Alignment singleLeaf, identicalSequenceAlignment, nonIdenticalSequenceAlignment, nonIdenticalNonClusteredSequenceAlignment;
-    private startingTree identicalSequenceTree, nonIdenticalSequenceTree, tooFewClustersTree, singleLeafTree;
-    private startingTree identicalSequenceTreeClusteringFalse, nonIdenticalSequenceTreeClusteringFalse,
+    private StartingTree identicalSequenceTree, nonIdenticalSequenceTree, tooFewClustersTree, singleLeafTree;
+    private StartingTree identicalSequenceTreeClusteringFalse, nonIdenticalSequenceTreeClusteringFalse,
             nonIdenticalNonClusteredSequenceTreeClusteringFalse;
 
 
@@ -66,38 +59,38 @@ public class StartingTreeTest {
         //dateTraitsIdenticalSequences.initByName("taxa", taxaWithIdenticalSequences, "traitname", "date-forward", "value", "1=32");
 
 
-        singleLeafTree = new startingTree();
+        singleLeafTree = new StartingTree();
         singleLeafTree.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
                 "sequencesAreClustered", true, "nClusters", 1, "taxa", singleLeaf);
 
 
         Randomizer.setSeed(6);
-        identicalSequenceTree = new startingTree();
+        identicalSequenceTree = new StartingTree();
         identicalSequenceTree.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
                 "sequencesAreClustered", true, "nClusters", 1, "taxa", identicalSequenceAlignment);
 
         Randomizer.setSeed(6);
-        identicalSequenceTreeClusteringFalse = new startingTree();
+        identicalSequenceTreeClusteringFalse = new StartingTree();
         identicalSequenceTreeClusteringFalse.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
                 "sequencesAreClustered", false, "taxa", identicalSequenceAlignment);
 
         Randomizer.setSeed(6);
-        nonIdenticalSequenceTree = new startingTree();
+        nonIdenticalSequenceTree = new StartingTree();
         nonIdenticalSequenceTree.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
                 "sequencesAreClustered", true, "nClusters", 3, "taxa", nonIdenticalSequenceAlignment);
 
 
 
-        tooFewClustersTree = new startingTree();
+        tooFewClustersTree = new StartingTree();
 
 
         Randomizer.setSeed(6);
-        nonIdenticalSequenceTreeClusteringFalse = new startingTree();
+        nonIdenticalSequenceTreeClusteringFalse = new StartingTree();
         nonIdenticalSequenceTreeClusteringFalse.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
                 "sequencesAreClustered", false, "taxa", nonIdenticalSequenceAlignment);
 
         Randomizer.setSeed(6);
-        nonIdenticalNonClusteredSequenceTreeClusteringFalse = new startingTree();
+        nonIdenticalNonClusteredSequenceTreeClusteringFalse = new StartingTree();
         nonIdenticalNonClusteredSequenceTreeClusteringFalse.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
                 "sequencesAreClustered", false, "taxa", nonIdenticalNonClusteredSequenceAlignment);
 
