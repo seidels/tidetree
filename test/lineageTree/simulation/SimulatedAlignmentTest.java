@@ -9,11 +9,8 @@ import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.tree.Tree;
 import beast.util.TreeParser;
 import lineageTree.substitutionmodel.EditAndSilencingModel;
-import beast.evolution.datatype.ScarData;
-
+import beast.evolution.datatype.EditData;
 import org.junit.Test;
-
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -25,7 +22,7 @@ public class SimulatedAlignmentTest{
 
         Sequence a = new Sequence("0", "0,");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "scarData", "stateCount", 4);
+        alignment.initByName("sequence", a, "dataType", "editData", "stateCount", 4);
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -82,7 +79,7 @@ public class SimulatedAlignmentTest{
 
         Sequence a = new Sequence("0", "0,");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "scarData", "stateCount", 4);
+        alignment.initByName("sequence", a, "dataType", "editData", "stateCount", 4);
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -119,7 +116,6 @@ public class SimulatedAlignmentTest{
         SimulatedAlignment simAlignment = new SimulatedAlignment();
         simAlignment.initByName("tree", tree1, "siteModel", siteM, "sequenceLength", 1, "branchRateModel", branchModel);
 
-        int[] helperNode = simAlignment.helperNodeSeq;
         assertTrue(simAlignment.branchType[0]);
         assertFalse(simAlignment.branchType[1]);
 
@@ -131,7 +127,7 @@ public class SimulatedAlignmentTest{
 
         Sequence a = new Sequence("0", "0,");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "scarData", "stateCount", 4);
+        alignment.initByName("sequence", a, "dataType", "editData", "stateCount", 4);
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -178,14 +174,14 @@ public class SimulatedAlignmentTest{
 
         Sequence a = new Sequence("0", "0,");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "scarData", "stateCount", 3);
+        alignment.initByName("sequence", a, "dataType", "editData", "stateCount", 3);
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
                 "(0[&cluster=0]:5.0)1[&cluster=0]:0.0",
                 "adjustTipHeights", false, "offset", 0);
 
-        ScarData scarDat = new ScarData();
+        EditData scarDat = new EditData();
         scarDat.initByName("nrOfStates", 3);
 
         //init edit model

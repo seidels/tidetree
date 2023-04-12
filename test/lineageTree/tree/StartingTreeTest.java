@@ -3,13 +3,12 @@ package lineageTree.tree;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.alignment.TaxonSet;
-import beast.evolution.datatype.ScarData;
+import beast.evolution.datatype.EditData;
 import beast.util.Randomizer;
 import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertArrayEquals;
 
 public class StartingTreeTest {
 
@@ -28,7 +27,7 @@ public class StartingTreeTest {
         Sequence d = new Sequence("4", "1,0");
         Sequence e = new Sequence("5", "0,1");
 
-        ScarData scarDat = new ScarData();
+        EditData scarDat = new EditData();
         scarDat.initByName("nrOfStates", 3);
 
         singleLeaf = new Alignment();

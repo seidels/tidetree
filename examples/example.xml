@@ -56,7 +56,7 @@ scarring started.
   <substModel id="substModel"
                spec="lineageTree.substitutionmodel.EditAndSilencingModel"
                editRates="@editRate" silencingRate="@silencingRate"
-               scarringHeight="54" scarringDuration="36">
+               editHeight="54" editDuration="36">
     <frequencies spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1 0 0" estimate="false"/>
   </substModel>
 
@@ -163,8 +163,8 @@ scarring started.
     </distribution>
 
    <!-- tree operators -->
-           <operator  spec="lineageTree.operators.WilsonBaldingSubTrees"
-                      tree="@tree" weight="30.0" scarringStopHeight="18"/>
+           <!-- operator  spec="lineageTree.operators.WilsonBaldingSubTrees"
+                      tree="@tree" weight="30.0" scarringStopHeight="18"/ -->
 
             <operator  spec="Uniform" tree="@tree" weight="30.0"/>
 
@@ -203,8 +203,8 @@ scarring started.
         <log id="treeLength"
                  spec="multitypetree.util.TreeLengthLogger"
                  tree="tree"/>
-        <log idref="scarringRate"/>
-        <log idref="lossRate" />
+        <log idref="editRate"/>
+        <log idref="silencingRate" />
         <log idref="clockRate.c"/>
         <log idref="birthRate"/>
         <log idref="rho"/>
