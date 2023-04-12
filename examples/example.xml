@@ -54,8 +54,8 @@ scarring started.
 
 
   <substModel id="substModel"
-               spec="lineageTree.substitutionmodel.GeneralScarringLoss"
-               scarringRates="@scarringRate" lossRate="@lossRate"
+               spec="lineageTree.substitutionmodel.EditAndSilencingModel"
+               editRates="@editRate" silencingRate="@silencingRate"
                scarringHeight="54" scarringDuration="36">
     <frequencies spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1 0 0" estimate="false"/>
   </substModel>
@@ -70,21 +70,22 @@ scarring started.
     <!-- here the parameter of the model are defined that will be operated on (i.e. estimated) during the MCMC -->
     <state id="state" spec="State" storeEvery="5000">
 
-            <stateNode id="tree"  spec="lineageTree.tree.startingTree" rootHeight="54"
-                       taxa="@s1_c1_data.txt" scarringHeight="54"
-                       scarringDuration="36" sequencesAreClustered="false">
+            <stateNode id="tree" spec="lineageTree.tree.StartingTree" rootHeight="54"
+                       taxa="@s1_c1_data.txt" editHeight="54"
+                       editDuration="36" sequencesAreClustered="false">
                 <trait idref="dateTrait"/>
                 <taxonset idref="TaxonSet"/>
             </stateNode>
 
         <!-- find the definition of the scarring, loss rate and clock rate in the TiDeTree manuscript -->
-          <parameter id="scarringRate" spec="parameter.RealParameter"
+          <parameter id="editRate" spec="parameter.RealParameter"
 		     dimension="1" lower="0.0" name="stateNode"
 		     upper="1000"> 0.9 1
           </parameter>
-        <parameter id="lossRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="1000"> 0.0</parameter>
+        <parameter id="silencingRate" spec="parameter.RealParameter" dimension="1"
+                   lower="0.0" name="stateNode" upper="1000"> 0.0</parameter>
 
-        <!-- the clock rate is the rate of acquiring scarred state 2 (i.e. the scarred state fixed to 1) -->
+        <!-- the clock rate is the rate of acquiring edited state 2  -->
         <parameter id="clockRate.c" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
         <!-- the mutation rate could be another rate multiplier, but we leave it fixed to 1 -->
         <parameter spec="parameter.RealParameter" estimate="false" id="mutationRate" name="stateNode">1.0</parameter>
@@ -124,7 +125,7 @@ scarring started.
                 </distribution>
 
             <!-- prior distributions on the substitution model parameters -->
-            <prior id="ScarringRatePriorFast" name="distribution" x="@scarringRate" spec="bdmmprime.util.priors.SmartZeroExcludingPrior">
+            <prior id="editRatePriorFast" name="distribution" x="@editRate" spec="bdmmprime.util.priors.SmartZeroExcludingPrior">
                 <LogNormal name="distr">
                   <parameter  spec="parameter.RealParameter" estimate="false" name="M">-4.0</parameter>
                   <parameter  spec="parameter.RealParameter" estimate="false" lower="0.0" name="S" upper="20.0">1.0</parameter>
@@ -151,8 +152,8 @@ scarring started.
         <distribution id="likelihood" spec="util.CompoundDistribution">
 
                 <distribution id="treeLikelihood"
-                              spec="lineageTree.distribution.organoidTreeLikelihood"
-                              data="@s1_c1_data.txt"
+                              spec="lineageTree.distributions.TreeLikelihoodWithEditWindow"
+                              data="@s1_c1_data.txt" origin="@origin"
 			      tree="@tree"
 			      siteModel="@siteModel">
                     <branchRateModel spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c"/>
@@ -174,7 +175,7 @@ scarring started.
 
 	<!-- Operators on phylogenetic parameters-->
 	<!-- scale all scarring rates but the one that is fixed to 1.0 -->
-	  <operator id="scarRateScaler" spec="bdmmprime.util.operators.SmartScaleOperator" parameter="@scarringRate"
+	  <operator id="editRateScaler" spec="bdmmprime.util.operators.SmartScaleOperator" parameter="@editRate"
                 scaleFactor="0.8" weight="3.0" classToExclude="1.0"/>
     <operator id="clockRateScaler" spec="bdmmprime.util.operators.SmartScaleOperator" parameter="@clockRate.c"
               scaleFactor="0.8" weight="3.0"/>
