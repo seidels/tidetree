@@ -1,10 +1,10 @@
 package lineageTree.tree;
 
-import beast.evolution.alignment.Alignment;
-import beast.evolution.alignment.Sequence;
-import beast.evolution.alignment.TaxonSet;
+import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.alignment.Sequence;
+import beast.base.evolution.alignment.TaxonSet;
 import beast.evolution.datatype.EditData;
-import beast.util.Randomizer;
+import beast.base.util.Randomizer;
 import org.junit.Before;
 import org.junit.Test;
 

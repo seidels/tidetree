@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<beast beautitemplate='MultiTypeBirthDeath' beautistatus='' namespace="lineageTree.substitutionmodel.ScarringLoss:beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood" required="" version="2.6">
+<beast beautitemplate='MultiTypeBirthDeath' beautistatus=''
+       namespace="beast.pkgmgmt
+       :beast.base.core
+       :beast.base.inference
+       :beast.base.evolution.alignment
+       :beast.base.evolution.tree.coalescent
+       :beast.base.core
+       :beast.base.inference.util
+       :beast.evolution.nuc
+       :beast.base.evolution.operator
+       :beast.base.inference.operator
+       :beast.base.evolution.sitemodel
+       :beast.base.evolution.substitutionmodel
+       :lineageTree
+       :beast.base.evolution.likelihood" required="" version="2.7">
 
 <!--
 This is an example xml that can be adapted to use TiDeTree on your data.
@@ -17,20 +31,20 @@ scarring started.
 -->
 
 <!-- syntactic sugar -->
-<map name="Uniform" >beast.math.distributions.Uniform</map>
-<map name="Exponential" >beast.math.distributions.Exponential</map>
-<map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
-<map name="Normal" >beast.math.distributions.Normal</map>
-<map name="Beta" >beast.math.distributions.Beta</map>
-<map name="Gamma" >beast.math.distributions.Gamma</map>
-<map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
-<map name="prior" >beast.math.distributions.Prior</map>
-<map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
-<map name="OneOnX" >beast.math.distributions.OneOnX</map>
+<map name="Uniform" >beast.base.inference.distribution.Uniform</map>
+<map name="Exponential" >beast.base.inference.distribution.Exponential</map>
+<map name="LogNormal" >beast.base.inference.distribution.LogNormalDistributionModel</map>
+<map name="Normal" >beast.base.inference.distribution.Normal</map>
+<map name="Beta" >beast.base.inference.distribution.Beta</map>
+<map name="Gamma" >beast.base.inference.distribution.Gamma</map>
+<map name="LaplaceDistribution" >beast.base.inference.distribution.LaplaceDistribution</map>
+<map name="prior" >beast.base.inference.distribution.Prior</map>
+<map name="InverseGamma" >beast.base.inference.distribution.InverseGamma</map>
+<map name="OneOnX" >beast.base.inference.distribution.OneOnX</map>
 
 <!-- input data -->
 <data  id="s1_c1_data.txt" spec="Alignment" name="alignment">
-                       <userDataType spec="beast.evolution.datatype.EditData"
+    <userDataType spec="tidetree.evolution.datatype.EditData"
                      nrOfStates="3" />
 <sequence id="cell_1" spec="Sequence" taxon="1" value="1,2,0,1,1,0,1,2,1,0,"/>
 <sequence id="cell_2" spec="Sequence" taxon="2" value="1,0,0,1,1,0,1,2,1,0,"/>
@@ -49,7 +63,7 @@ scarring started.
 </taxa>
 
 <!-- specify tip dates, here 54h after the start of the experiment -->
-<traitSet id="dateTrait" spec="beast.evolution.tree.TraitSet" taxa="@TaxonSet" traitname="date-forward"
+<traitSet id="dateTrait" spec="beast.base.evolution.tree.TraitSet" taxa="@TaxonSet" traitname="date-forward"
 	  value="1=54,2=54,3=54,4=54,5=54,6=54,7=54,8=54,9=54"/>
 
 
@@ -57,7 +71,7 @@ scarring started.
                spec="lineageTree.substitutionmodel.EditAndSilencingModel"
                editRates="@editRate" silencingRate="@silencingRate"
                editHeight="54" editDuration="36">
-    <frequencies spec="beast.evolution.substitutionmodel.Frequencies" frequencies="1 0 0" estimate="false"/>
+    <frequencies spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1 0 0" estimate="false"/>
   </substModel>
 
   <siteModel spec="SiteModel" id="siteModel" mutationRate="@mutationRate" proportionInvariant="@proportionInvariant"
@@ -69,7 +83,6 @@ scarring started.
 
     <!-- here the parameter of the model are defined that will be operated on (i.e. estimated) during the MCMC -->
     <state id="state" spec="State" storeEvery="5000">
-
             <stateNode id="tree" spec="lineageTree.tree.StartingTree" rootHeight="54"
                        taxa="@s1_c1_data.txt" editHeight="54"
                        editDuration="36" sequencesAreClustered="false">
@@ -80,7 +93,7 @@ scarring started.
         <!-- find the definition of the scarring, loss rate and clock rate in the TiDeTree manuscript -->
           <parameter id="editRate" spec="parameter.RealParameter"
 		     dimension="1" lower="0.0" name="stateNode"
-		     upper="1000"> 0.9 1
+		     upper="1000"> 0.9 0.1
           </parameter>
         <parameter id="silencingRate" spec="parameter.RealParameter" dimension="1"
                    lower="0.0" name="stateNode" upper="1000"> 0.0</parameter>
@@ -112,20 +125,20 @@ scarring started.
 
 
 
-    <distribution id="posterior" spec="util.CompoundDistribution">
+    <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
 
         <!-- Prior distributions -->
-        <distribution id="prior" spec="util.CompoundDistribution">
+        <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
 
             <!-- The tree prior (or population dynamic model): the birth death sampling model -->
-                <distribution id="birthDeathSamplingModel" spec="beast.evolution.speciation.BirthDeathSkylineModel"
+                <distribution id="birthDeathSamplingModel" spec="bdsky.evolution.speciation.BirthDeathSkylineModel"
                           conditionOnSurvival="True" tree="@tree" origin="@origin" contemp="true"
                           birthRate="@birthRate" deathRate="@deathRate" rho="@rho"
                           samplingRate="@samplingRate" >
                 </distribution>
 
             <!-- prior distributions on the substitution model parameters -->
-            <prior id="editRatePriorFast" name="distribution" x="@editRate" spec="bdmmprime.util.priors.SmartZeroExcludingPrior">
+            <prior id="editRatePrior" name="distribution" x="@editRate">
                 <LogNormal name="distr">
                   <parameter  spec="parameter.RealParameter" estimate="false" name="M">-4.0</parameter>
                   <parameter  spec="parameter.RealParameter" estimate="false" lower="0.0" name="S" upper="20.0">1.0</parameter>
@@ -139,7 +152,7 @@ scarring started.
 
             <!-- prior distributions on phylodynamic parameters -->
             <!-- [0.4, 2.7] -->
-            <prior id="birthRatePrior" name="distribution" x="@birthRate" spec="bdmmprime.util.priors.SmartZeroExcludingPrior">
+            <prior id="birthRatePrior" name="distribution" x="@birthRate">
                 <LogNormal name="distr" M="0" S="0.6"/>
             </prior>
             <!-- [0.01, 1.4] -->
@@ -149,14 +162,14 @@ scarring started.
         </distribution>
 
         <!-- Tree likelihood -->
-        <distribution id="likelihood" spec="util.CompoundDistribution">
+        <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
 
                 <distribution id="treeLikelihood"
                               spec="lineageTree.distributions.TreeLikelihoodWithEditWindow"
                               data="@s1_c1_data.txt" origin="@origin"
 			      tree="@tree"
 			      siteModel="@siteModel">
-                    <branchRateModel spec="beast.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c"/>
+                    <branchRateModel spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c"/>
                 </distribution>
 
         </distribution>
@@ -174,10 +187,10 @@ scarring started.
 
 
 	<!-- Operators on phylogenetic parameters-->
-	<!-- scale all scarring rates but the one that is fixed to 1.0 -->
-	  <operator id="editRateScaler" spec="bdmmprime.util.operators.SmartScaleOperator" parameter="@editRate"
-                scaleFactor="0.8" weight="3.0" classToExclude="1.0"/>
-    <operator id="clockRateScaler" spec="bdmmprime.util.operators.SmartScaleOperator" parameter="@clockRate.c"
+	<!-- operator on edit probabilities while keeping their sum fixed to 1 -->
+	  <operator id="editRateScaler" spec="DeltaExchangeOperator" parameter="@editRate"
+                 weight="3.0"/>
+    <operator id="clockRateScaler" spec="ScaleOperator" parameter="@clockRate.c"
               scaleFactor="0.8" weight="3.0"/>
 
 
@@ -198,11 +211,8 @@ scarring started.
         <log idref="prior"/>
         <log idref="treeLikelihood"/>
         <log id="treeHeight"
-                 spec="beast.evolution.tree.TreeHeightLogger"
+                 spec="beast.base.evolution.tree.TreeHeightLogger"
                  tree="@tree"/>
-        <log id="treeLength"
-                 spec="multitypetree.util.TreeLengthLogger"
-                 tree="tree"/>
         <log idref="editRate"/>
         <log idref="silencingRate" />
         <log idref="clockRate.c"/>

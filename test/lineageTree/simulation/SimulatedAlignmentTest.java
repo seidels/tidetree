@@ -1,13 +1,13 @@
 package lineageTree.simulation;
 
-import beast.core.parameter.RealParameter;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.alignment.Sequence;
-import beast.evolution.branchratemodel.StrictClockModel;
-import beast.evolution.sitemodel.SiteModel;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.tree.Tree;
-import beast.util.TreeParser;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.alignment.Sequence;
+import beast.base.evolution.branchratemodel.StrictClockModel;
+import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeParser;
 import lineageTree.substitutionmodel.EditAndSilencingModel;
 import beast.evolution.datatype.EditData;
 import org.junit.Test;

@@ -1,9 +1,9 @@
 package lineageTree.distributions;
 
-import beast.core.Description;
-import beast.evolution.likelihood.BeerLikelihoodCore;
-import beast.evolution.sitemodel.SiteModelInterface;
-import beast.evolution.tree.Node;
+import beast.base.core.Description;
+import beast.base.evolution.likelihood.BeerLikelihoodCore;
+import beast.base.evolution.sitemodel.SiteModelInterface;
+import beast.base.evolution.tree.Node;
 import lineageTree.substitutionmodel.EditAndSilencingModel;
 
 /**

@@ -1,8 +1,8 @@
 package lineageTree.substitutionmodel;
 
-import beast.core.parameter.RealParameter;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.tree.Node;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.evolution.tree.Node;
 import org.junit.Before;
 import org.junit.Test;
 
