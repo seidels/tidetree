@@ -1,4 +1,4 @@
-package lineageTree.tree;
+package tidetree.tree;
 
 import beast.base.core.Description;
 import beast.base.core.Input;

@@ -1,5 +1,6 @@
-package lineageTree.simulation;/*
- * Copyright (C) 2015 Tim Vaughan <tgvaughan@gmail.com>
+package tidetree.simulation;
+/*
+ * Copyright (C) 2022 Sophie Seidel <sophie.seidel@posteo.de>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ import beast.base.util.Randomizer;
 import feast.nexus.CharactersBlock;
 import feast.nexus.NexusBuilder;
 import feast.nexus.TaxaBlock;
-import lineageTree.substitutionmodel.EditAndSilencingModel;
+import tidetree.substitutionmodel.EditAndSilencingModel;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;

@@ -1,10 +1,10 @@
-package lineageTree.distributions;
+package tidetree.distributions;
 
 import beast.base.core.Description;
 import beast.base.evolution.likelihood.BeerLikelihoodCore;
 import beast.base.evolution.sitemodel.SiteModelInterface;
 import beast.base.evolution.tree.Node;
-import lineageTree.substitutionmodel.EditAndSilencingModel;
+import tidetree.substitutionmodel.EditAndSilencingModel;
 
 /**
  * @author Sophie Seidel

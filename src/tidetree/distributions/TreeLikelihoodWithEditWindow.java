@@ -1,4 +1,4 @@
-package lineageTree.distributions;
+package tidetree.distributions;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
@@ -15,7 +15,7 @@ import beast.base.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeInterface;
-import lineageTree.substitutionmodel.EditAndSilencingModel;
+import tidetree.substitutionmodel.EditAndSilencingModel;
 
 import java.util.Arrays;
 

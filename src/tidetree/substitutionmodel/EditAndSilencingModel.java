@@ -1,4 +1,4 @@
-package lineageTree.substitutionmodel;
+package tidetree.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
