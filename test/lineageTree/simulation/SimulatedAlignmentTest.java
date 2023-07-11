@@ -19,7 +19,7 @@ public class SimulatedAlignmentTest{
 
     @Test
     public void testBranchType00 (){
-
+//hi!
         Sequence a = new Sequence("0", "0,");
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "dataType", "editData", "stateCount", 4);
