@@ -12,7 +12,8 @@ import beast.base.evolution.datatype.DataType.Base;
 public class EditData extends Base {
 
     public Input<Integer> nrOfStatesInput = new Input<>("nrOfStates",
-            "The number of states a barcode can be in, i.e. the number of different indels + 2");
+            "The number of states a barcode can be in, i.e. the number of different indels + 2",
+            Input.Validate.REQUIRED);
 
 
     public void initAndValidate(){
