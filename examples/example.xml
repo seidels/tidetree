@@ -12,7 +12,7 @@
        :beast.base.inference.operator
        :beast.base.evolution.sitemodel
        :beast.base.evolution.substitutionmodel
-       :lineageTree
+       :tidetree
        :beast.base.evolution.likelihood" required="" version="2.7">
 
 <!--
@@ -68,7 +68,7 @@ scarring started.
 
 
   <substModel id="substModel"
-               spec="lineageTree.substitutionmodel.EditAndSilencingModel"
+               spec="tidetree.substitutionmodel.EditAndSilencingModel"
                editRates="@editRate" silencingRate="@silencingRate"
                editHeight="54" editDuration="36">
     <frequencies spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1 0 0" estimate="false"/>
@@ -83,7 +83,7 @@ scarring started.
 
     <!-- here the parameter of the model are defined that will be operated on (i.e. estimated) during the MCMC -->
     <state id="state" spec="State" storeEvery="5000">
-            <stateNode id="tree" spec="lineageTree.tree.StartingTree" rootHeight="54"
+            <stateNode id="tree" spec="tidetree.tree.StartingTree" rootHeight="54"
                        taxa="@s1_c1_data.txt" editHeight="54"
                        editDuration="36" sequencesAreClustered="false">
                 <trait idref="dateTrait"/>
@@ -165,7 +165,7 @@ scarring started.
         <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
 
                 <distribution id="treeLikelihood"
-                              spec="lineageTree.distributions.TreeLikelihoodWithEditWindow"
+                              spec="tidetree.distributions.TreeLikelihoodWithEditWindow"
                               data="@s1_c1_data.txt" origin="@origin"
 			      tree="@tree"
 			      siteModel="@siteModel">
@@ -176,7 +176,7 @@ scarring started.
     </distribution>
 
    <!-- tree operators -->
-           <!-- operator  spec="lineageTree.operators.WilsonBaldingSubTrees"
+           <!-- operator  spec="tidetree.operators.WilsonBaldingSubTrees"
                       tree="@tree" weight="30.0" scarringStopHeight="18"/ -->
 
             <operator  spec="Uniform" tree="@tree" weight="30.0"/>
