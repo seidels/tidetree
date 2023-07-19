@@ -4,9 +4,9 @@
 
   <service type="beast.base.core.BEASTInterface">
     <provider classname="tidetree.evolution.datatype.EditData"/>
-    <provider classname="lineageTree.substitutionmodel.EditAndSilencingModel"/>
-    <provider classname="lineageTree.tree.StartingTree"/>
-    <provider classname="lineageTree.simulation.SimulatedAlignment"/>
-    <provider classname="lineageTree.distributions.TreeLikelihoodWithEditWindow"/>
+    <provider classname="tidetree.substitutionmodel.EditAndSilencingModel"/>
+    <provider classname="tidetree.tree.StartingTree"/>
+    <provider classname="tidetree.distributions.TreeLikelihoodWithEditWindow"/>
+    <provider classname="tidetree.simulation.SimulatedAlignment"/>
   </service>
 </package>
