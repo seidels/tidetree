@@ -3,6 +3,7 @@ package tidetree.tree;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.alignment.TaxonSet;
+import beast.base.inference.parameter.RealParameter;
 import tidetree.evolution.datatype.EditData;
 import beast.base.util.Randomizer;
 import org.junit.Before;
@@ -16,6 +17,9 @@ public class StartingTreeTest {
     private StartingTree identicalSequenceTree, nonIdenticalSequenceTree, tooFewClustersTree, singleLeafTree;
     private StartingTree identicalSequenceTreeClusteringFalse, nonIdenticalSequenceTreeClusteringFalse,
             nonIdenticalNonClusteredSequenceTreeClusteringFalse;
+    RealParameter rootHeight = new RealParameter("32.0");
+    RealParameter editHeight = new RealParameter("25.0");
+    RealParameter editDuration = new RealParameter("2.0");
 
 
     @Before
@@ -59,23 +63,24 @@ public class StartingTreeTest {
 
 
         singleLeafTree = new StartingTree();
-        singleLeafTree.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
+
+        singleLeafTree.initByName("rootHeight", rootHeight, "editHeight", editHeight, "editDuration", editDuration,
                 "sequencesAreClustered", true, "nClusters", 1, "taxa", singleLeaf);
 
 
         Randomizer.setSeed(6);
         identicalSequenceTree = new StartingTree();
-        identicalSequenceTree.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
+        identicalSequenceTree.initByName("rootHeight", rootHeight, "editHeight", editHeight, "editDuration", editDuration,
                 "sequencesAreClustered", true, "nClusters", 1, "taxa", identicalSequenceAlignment);
 
         Randomizer.setSeed(6);
         identicalSequenceTreeClusteringFalse = new StartingTree();
-        identicalSequenceTreeClusteringFalse.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
+        identicalSequenceTreeClusteringFalse.initByName("rootHeight", rootHeight, "editHeight", editHeight, "editDuration", editDuration,
                 "sequencesAreClustered", false, "taxa", identicalSequenceAlignment);
 
         Randomizer.setSeed(6);
         nonIdenticalSequenceTree = new StartingTree();
-        nonIdenticalSequenceTree.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
+        nonIdenticalSequenceTree.initByName("rootHeight", rootHeight, "editHeight", editHeight, "editDuration", editDuration,
                 "sequencesAreClustered", true, "nClusters", 3, "taxa", nonIdenticalSequenceAlignment);
 
 
@@ -85,12 +90,12 @@ public class StartingTreeTest {
 
         Randomizer.setSeed(6);
         nonIdenticalSequenceTreeClusteringFalse = new StartingTree();
-        nonIdenticalSequenceTreeClusteringFalse.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
+        nonIdenticalSequenceTreeClusteringFalse.initByName("rootHeight", rootHeight, "editHeight", editHeight, "editDuration", editDuration,
                 "sequencesAreClustered", false, "taxa", nonIdenticalSequenceAlignment);
 
         Randomizer.setSeed(6);
         nonIdenticalNonClusteredSequenceTreeClusteringFalse = new StartingTree();
-        nonIdenticalNonClusteredSequenceTreeClusteringFalse.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
+        nonIdenticalNonClusteredSequenceTreeClusteringFalse.initByName("rootHeight", rootHeight, "editHeight", editHeight, "editDuration", editDuration,
                 "sequencesAreClustered", false, "taxa", nonIdenticalNonClusteredSequenceAlignment);
 
     }
@@ -134,7 +139,7 @@ public class StartingTreeTest {
     public void testTreeWithWrongClusterInput() {
         String trueTree = "(((0[&cluster=0]:22.937122117900326,1[&cluster=0]:22.937122117900326)5[&cluster=0]:4.862877882099674,(2[&cluster=1]:22.91972105121713,3[&cluster=1]:22.91972105121713)6[&cluster=1]:4.88027894878287)7[&cluster=0]:4.199999999999999,4[&cluster=2]:32.0)8[&cluster=0]:0.0";
         try{
-            tooFewClustersTree.initByName("rootHeight", 32.0, "editHeight", 25.0, "editDuration", 2.0,
+            tooFewClustersTree.initByName("rootHeight", rootHeight, "editHeight", editHeight, "editDuration", editDuration,
                     "sequencesAreClustered", true, "nClusters", 2, "taxa", nonIdenticalSequenceAlignment);
         }catch (RuntimeException exception){
             assertEquals("initAndValidate() failed! The number of clusters is larger than specified!", exception.getMessage());
