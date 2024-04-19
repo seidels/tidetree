@@ -26,11 +26,12 @@ A key component of TiDeTree is the editing and silencing model. Let's talk about
 
 We model this editing process as a 2-step process. The rate at which any edit occurs per unit of time is the clock rate r. 
 
-![tidetree_editing_clock](https://github.com/seidels/tidetree/assets/13159214/b454cc15-7ed7-4630-b84f-ba3a2d174db8)
+![tidetree_editing_clock](https://github.com/seidels/tidetree/assets/13159214/5d0c9c47-f012-477a-903c-2eba60e35844)
 
 Then, a particular edit $i$ is introduced with a relative editing rate $s_i$. You can also easily get the probability of introducing edit $i$  by taking $s_i / \sum_j s_j$   (This parameterisation is in TiDeTree's supplementary material page 5.  An alternative parameterisation is in the main text page 3, matrix Q 2.2).
 
-![tidetree_editing](https://github.com/seidels/tidetree/assets/13159214/167c444f-d2e8-431b-91d8-288ce9ba515e)
+![tidetree_editing](https://github.com/seidels/tidetree/assets/13159214/03e5f486-733c-4dbf-91d7-b48fddc39b12)
+
 
 So how do we put this into our BEAST XML? We specify starting values for the clock and the editing rates. In this example, we have a clock rate of 1 per time unit and 3 editing rates for 3 different edited states.
 
