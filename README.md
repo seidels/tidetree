@@ -36,7 +36,7 @@ Then, a particular edit $i$ is introduced with a relative editing rate $s_i$. Yo
 So how do we put this into our BEAST XML? We specify starting values for the clock and the editing rates. In this example, we have a clock rate of 1 per time unit and 3 editing rates for 3 different edited states.
 
 ```XML
-<!-- the clock rate is the rate of acquiring edited state 2  -->
+<!-- the clock rate  -->
 <parameter id="clockRate.c" spec="parameter.RealParameter" name="stateNode">
  1.0
 </parameter>
