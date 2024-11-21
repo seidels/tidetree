@@ -11,6 +11,6 @@
   </service>
 
   <service type="beastfx.app.inputeditor.AlignmentImporter">
-    <provider classname="sciphy.util.NexusImporter"/>
+    <provider classname="tidetree.util.NexusImporter"/>
   </service>
 </package>
