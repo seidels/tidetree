@@ -20,18 +20,17 @@ import java.util.stream.Stream;
         "state.")
 public class EditAndSilencingModel extends SubstitutionModel.Base {
 
-        final public Input<List<RealParameter>> editRatesInput = new Input<>("editRates",
+        final public Input<RealParameter> editRatesInput = new Input<>("editRates",
                 "Rates at which edits are introduced into " +
                         "the genomic barcode during the editing window",
 
-                new ArrayList<>(), Input.Validate.REQUIRED);
+                Input.Validate.REQUIRED);
 
         final public Input<RealParameter> silencingRateInput = new Input<>("silencingRate",
                 "Rate at which barcodes are silenced " +
                         "throughout the entire experiment", Input.Validate.REQUIRED);
 
-        //rename edit height!
-    // rename to editingStart; time
+
         public Input<RealParameter> editHeightInput = new Input<>("editHeight",
                 "Duration between the onset of edit and sampling of the cells", Input.Validate.REQUIRED);
 
@@ -57,10 +56,10 @@ public class EditAndSilencingModel extends SubstitutionModel.Base {
     public void initAndValidate() {
 
         // one state for each edit type + unedited + lost
-        nrOfStates = editRatesInput.get().get(0).getDimension() + 2;
+        nrOfStates = editRatesInput.get().getDimension() + 2;
         rateMatrix = new double[nrOfStates][nrOfStates];
 
-        editRate_ = editRatesInput.get().get(0);
+        editRate_ = editRatesInput.get();
         silencingRate_ = silencingRateInput.get();
 
         // assert positive rates
