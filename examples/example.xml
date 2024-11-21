@@ -131,10 +131,9 @@ scarring started.
         <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
 
             <!-- The tree prior (or population dynamic model): the birth death sampling model -->
-                <distribution id="birthDeathSamplingModel" spec="bdsky.evolution.speciation.BirthDeathSkylineModel"
-                          conditionOnSurvival="True" tree="@tree" origin="@origin" contemp="true"
-                          birthRate="@birthRate" deathRate="@deathRate" rho="@rho"
-                          samplingRate="@samplingRate" >
+                <distribution id="birthDeathSamplingModel" spec="beast.base.evolution.speciation.YuleModel"
+                          conditionalOnRoot="False" tree="@tree" originHeight="@origin"
+                              birthDiffRate="@birthRate" >
                 </distribution>
 
             <!-- prior distributions on the substitution model parameters -->
