@@ -170,8 +170,7 @@
 	            </log>
             </logger>
 
-			<distribution id="SciPhyTreeLikelihood.$(n)" spec='tidetree.distributions.TreeLikelihoodWithEditWindow' tree='@Tree.t:$(n)'
-			origin="5">
+			<distribution id="SciPhyTreeLikelihood.$(n)" spec='tidetree.distributions.TreeLikelihoodWithEditWindow' tree='@Tree.t:$(n)'>
 				<data spec="beast.base.evolution.alignment.Alignment" id='$(n)'>
 					<userDataType spec='beast.base.evolution.datatype.IntegerData' id='integerDataType.$(n)' />
 				</data>
@@ -182,12 +181,10 @@
                     <!-- SciPhy subst model -->
 					<substModel spec="tidetree.substitutionmodel.EditAndSilencingModel" id="TideTreeSubstmodel.s:$(n)">
 					    <parameter id="editProbabilities.s:$(n)" name="editRates" value="
-					    0.1 0.1 0.1 0.1 0.1
-					    0.1 0.1 0.1 0.1 0.025
-					    0.025 0.025 0.025"
-					    estimate="true" dimension="1"/>
+					    0.9 0.1"
+					    estimate="true"/>
 					    <frequencies id="freq" spec="beast.base.evolution.substitutionmodel.Frequencies"
-					    estimate="false" frequencies="1.0 0 0 0 0 0 0 0 0 0 0 0 0 0"/>
+					    estimate="false" frequencies="1.0 0 0"/>
 
 					    <parameter id="silencingRate.s:$(n)" name="silencingRate" value="1.0" estimate="true" />
 					    <parameter id="editHeight.s:$(n)" name="editHeight" value="20.0" estimate="false" />
@@ -202,9 +199,9 @@
 			</distribution>
 
             <!-- default tree prior -->
-            <plugin spec='YuleModel' id="YuleModel.t:$(n)" tree='@Tree.t:$(n)'>
+            <prior spec='YuleModel' id="YuleModel.t:$(n)" tree='@Tree.t:$(n)'>
                 <parameter name='birthDiffRate' id="birthRate.t:$(n)" value='1.0' estimate='true'/>
-            </plugin>
+            </prior>
 
             <prior id='EditProbabilitiesPrior.s:$(n)' x='@editProbabilities.s:$(n)'>
                 <distr spec="beast.base.inference.distribution.Dirichlet" >
