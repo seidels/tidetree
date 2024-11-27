@@ -170,7 +170,7 @@
 	            </log>
             </logger>
 
-			<distribution id="SciPhyTreeLikelihood.$(n)" spec='tidetree.distributions.TreeLikelihoodWithEditWindow' tree='@Tree.t:$(n)'>
+			<distribution id="TiDeTreeTreeLikelihood.$(n)" spec='tidetree.distributions.TreeLikelihoodWithEditWindow' tree='@Tree.t:$(n)'>
 				<data spec="beast.base.evolution.alignment.Alignment" id='$(n)'>
 					<userDataType spec='beast.base.evolution.datatype.IntegerData' id='integerDataType.$(n)' />
 				</data>
@@ -178,7 +178,7 @@
 						<proportionInvariant spec='parameter.RealParameter' id='proportionInvariant.s:$(n)' value='0.0' lower='0' upper='1' estimate='false'/>
 				        <mutationRate        spec='parameter.RealParameter' id='mutationRate.s:$(n)' value='1.0' estimate='false'/>
 				        <shape               spec='parameter.RealParameter' id='gammaShape.s:$(n)' value='1.0' estimate='false'/>
-                    <!-- SciPhy subst model -->
+                    <!-- TiDeTree subst model -->
 					<substModel spec="tidetree.substitutionmodel.EditAndSilencingModel" id="TideTreeSubstmodel.s:$(n)">
 					    <parameter id="editProbabilities.s:$(n)" name="editRates" value="
 					    0.9 0.1"
@@ -210,6 +210,10 @@
                 </distr>
             </prior>
 
+            <prior id='SilencingRatePrior.s:$(n)' x='@silencingRate.s:$(n)'>
+                <distr spec="beast.base.inference.distribution.Uniform" upper='Infinity'/>
+            </prior>
+
             <prior id='ClockPrior.c:$(n)' x='@clockRate.c:$(n)'>
                 <distr spec="beast.base.inference.distribution.Uniform" upper='Infinity'/>
             </prior>
@@ -230,6 +234,7 @@
             <operator id='mutationRateScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@mutationRate.s:$(n)"/>
             <operator id='originScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@experimentLength.$(n)"/>
             <operator id='editProbabilitiesScaler.s:$(n)' spec='DeltaExchangeOperator' weight="4" parameter="@editProbabilities.s:$(n)" delta="0.1"/>
+            <operator id='silencingRateScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@silencingRate.s:$(n)"/>
             <operator id='gammaShapeScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="0.1" parameter="@gammaShape.s:$(n)"/>
 
             <operator id='allTipDatesRandomWalker.t:$(n)' spec='TipDatesRandomWalker' windowSize="1" weight="0" tree="@Tree.t:$(n)"/>
@@ -252,7 +257,7 @@
             </upDownOperator>
 
 ]]>
-            <connect srcID='SciPhyTreeLikelihood.$(n)'         targetID='likelihood' inputName='distribution' if="isInitializing"/>
+            <connect srcID='TiDeTreeTreeLikelihood.$(n)'         targetID='likelihood' inputName='distribution' if="isInitializing"/>
             <connect srcID='YuleModel.t:$(n)'               targetID='prior' inputName='distribution' if="isInitializing"/>
             <connect method="beastfx.app.inputeditor.SiteModelInputEditor.customConnector"/>
 
@@ -261,18 +266,25 @@
 
             <connect srcID='ClockPrior.c:$(n)'                targetID='prior' inputName='distribution' if='clockRate.c:$(n)/estimate=true'/>
             <connect srcID='EditProbabilitiesPrior.s:$(n)'    targetID='prior' inputName='distribution' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'/>
+            <connect srcID='SilencingRatePrior.s:$(n)'        targetID='prior' inputName='distribution' if='inlikelihood(silencingRate.s:$(n)) and silencingRate.s:$(n)/estimate=true'/>
+
             <!-- when FixMeanMutationRatesOperator, the prior is uniform due to the operator -->
             <connect srcID='MutationRatePrior.s:$(n)'         targetID='prior' inputName='distribution' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
 
             <connect srcID='Tree.t:$(n)'                      targetID='state' inputName='stateNode' if='inposterior(Tree.t:$(n))'/>
             <connect srcID='mutationRate.s:$(n)'              targetID='state' inputName='stateNode' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
             <connect srcID='editProbabilities.s:$(n)'         targetID='state' inputName='stateNode' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'/>
+            <connect srcID='silencingRate.s:$(n)'             targetID='state' inputName='stateNode' if='inlikelihood(silencingRate.s:$(n)) and silencingRate.s:$(n)/estimate=true'/>
+
             <connect srcID='gammaShape.s:$(n)'                targetID='state' inputName='stateNode' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
             <connect srcID='clockRate.c:$(n)'                 targetID='state' inputName='stateNode' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
             <connect srcID='birthRate.t:$(n)'                 targetID='state' inputName='stateNode' if='inposterior(YuleModel.t:$(n)) and inposterior(Tree.t:$(n)) and birthRate.t:$(n)/estimate=true'/>
             <connect srcID='experimentLength.$(n)'                    targetID='state' inputName='stateNode' if='inlikelihood(experimentLength.$(n)) and experimentLength.$(n)/estimate=true'/>
 
             <connect srcID='editProbabilitiesScaler.s:$(n)'   targetID='mcmc' inputName='operator' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'>Changes the edit probabilities for partition s:$(n)</connect>
+            <connect srcID='silencingRateScaler.s:$(n)'       targetID='mcmc' inputName='operator' if='inlikelihood(silencingRate.s:$(n)) and silencingRate.s:$(n)/estimate=true'>Changes the silencing rate for partition s:$(n)</connect>
+
+
             <connect srcID='mutationRateScaler.s:$(n)'        targetID='mcmc' inputName='operator' if='nooperator(FixMeanMutationRatesOperator) and inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'>Scales mutation rate of partition s:$(n)</connect>
             <connect srcID='gammaShapeScaler.s:$(n)'          targetID='mcmc' inputName='operator' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'>Scales gamma shape parameter of partition s:$(n)</connect>
             <connect srcID='StrictClockRateScaler.c:$(n)'     targetID='mcmc' inputName='operator' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'>Scale clock rate of partition c:$(n)</connect>
@@ -292,9 +304,11 @@
             <connect if="inposterior(YuleModel.t:$(n)) and Tree.t:$(n)/estimate=true" inputName="operator" srcID="YuleModelWide.t:$(n)" targetID="mcmc">Wide exchange performs global rearrangement of tree t:$(n)</connect>
             <connect if="inposterior(YuleModel.t:$(n)) and Tree.t:$(n)/estimate=true" inputName="operator" srcID="YuleModelWilsonBalding.t:$(n)" targetID="mcmc">Performs Wilson-Balding global rearrangement of tree t:$(n)</connect>
 
-            <connect srcID='SciPhyTreeLikelihood.$(n)'         targetID='tracelog' inputName='log' if='inlikelihood(SciPhyTreeLikelihood.$(n))'/>
+            <connect srcID='TiDeTreeTreeLikelihood.$(n)'         targetID='tracelog' inputName='log' if='inlikelihood(TiDeTreeTreeLikelihood.$(n))'/>
             <connect srcID='TreeHeight.t:$(n)'                targetID='tracelog' inputName='log' if='inposterior(Tree.t:$(n))'/>
             <connect srcID='editProbabilities.s:$(n)'         targetID='tracelog' inputName='log' if='inlikelihood(editProbabilities.s:$(n)) and editProbabilities.s:$(n)/estimate=true'/>
+            <connect srcID='silencingRate.s:$(n)'             targetID='tracelog' inputName='log' if='inlikelihood(silencingRate.s:$(n)) and silencingRate.s:$(n)/estimate=true'/> 
+
             <connect srcID='mutationRate.s:$(n)'              targetID='tracelog' inputName='log' if='inlikelihood(mutationRate.s:$(n)) and mutationRate.s:$(n)/estimate=true'/>
             <connect srcID='gammaShape.s:$(n)'                targetID='tracelog' inputName='log' if='inlikelihood(gammaShape.s:$(n)) and gammaShape.s:$(n)/estimate=true'/>
             <connect srcID='clockRate.c:$(n)'                 targetID='tracelog' inputName='log' if='inlikelihood(clockRate.c:$(n)) and clockRate.c:$(n)/estimate=true'/>
@@ -312,7 +326,7 @@
         <mergepoint id='parametricDistributions'/>
 
         <!-- Newick tree -->
-        <!--        <subtemplate id='SciphyStartingTree' class='tidetree.tree.StartingTree' mainid='StartingTree.t:$(n)'>-->
+        <!--        <subtemplate id='TiDeTreeStartingTree' class='tidetree.tree.StartingTree' mainid='StartingTree.t:$(n)'>-->
         <!--            <![CDATA[-->
         <!--        <tree spec='tidetree.tree.StartingTree' id='StartingTree.t:$(n)' estimate='false' taxonset='@TaxonSet.$(n)'-->
         <!--                taxa="@$(n)" editHeight="20" rootHeight="24"-->
