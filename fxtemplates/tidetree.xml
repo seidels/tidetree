@@ -206,9 +206,7 @@
             <prior id='EditProbabilitiesPrior.s:$(n)' x='@editProbabilities.s:$(n)'>
                 <distr spec="beast.base.inference.distribution.Dirichlet" >
                 <parameter id="alpha.s:$(n)" name="alpha" value="
-                1.5 1.5 1.5 1.5 1.5
-                1.5 1.5 1.5 1.5 1.5
-                1.5 1.5 1.5" />
+                1.5 1.5" />
                 </distr>
             </prior>
 
