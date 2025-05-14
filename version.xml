@@ -9,6 +9,7 @@
     <provider classname="tidetree.tree.StartingTree"/>
     <provider classname="tidetree.distributions.TreeLikelihoodWithEditWindow"/>
     <provider classname="tidetree.simulation.SimulatedAlignment"/>
+    <provider classname="tidetree.util.AlignmentFromNexus" />
   </service>
 
   <service type="beastfx.app.inputeditor.AlignmentImporter">
