@@ -31,10 +31,9 @@ public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
             Input.Validate.OPTIONAL);
     final public Input<Frequencies> rootFrequenciesInput =
             new Input<>("rootFrequencies", "prior state frequencies at root, optional", Input.Validate.OPTIONAL);
-    public static enum Scaling {none, always, _default};
-    final public Input<TreeLikelihood.Scaling> scaling = new Input<>("scaling",
-            "type of scaling to use, one of " + Arrays.toString(TreeLikelihood.Scaling.values()) + ". If not specified, the -beagle_scaling flag is used.",
-            TreeLikelihood.Scaling.none, TreeLikelihood.Scaling.values());
+
+    final public Input<Boolean> useScalingInput = new Input<Boolean>("useScaling", "Whether or not to scale the log likelihood", false,
+            Input.Validate.OPTIONAL);
 
 
 
@@ -173,6 +172,10 @@ public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
         probabilities = new double[(nrOfStates + 1) * (nrOfStates + 1)];
         Arrays.fill(probabilities, 1.0);
 
+        if (useScalingInput.get()) {
+            boolean useScaling = true;
+        }
+
         // init calculation engine
         initCore();
 
@@ -218,6 +221,11 @@ public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
         for (int i = 0; i < intNodeCount; i++) {
             likelihoodCore.createNodePartials(extNodeCount + i);
         }
+
+        if (useScalingInput.get()) {
+            likelihoodCore.setUseScaling(1.01);
+        }
+
     }
 
     /**
@@ -446,7 +454,7 @@ public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
             return Double.NEGATIVE_INFINITY;
         }
         m_nScale++;
-        /*if (logP > 0 || (likelihoodCore.getUseScaling() && m_nScale > X)) {
+        if (logP > 0 || (likelihoodCore.getUseScaling() && m_nScale > X)) {
 //            System.err.println("Switch off scaling");
 //            m_likelihoodCore.setUseScaling(1.0);
 //            m_likelihoodCore.unstore();
@@ -459,14 +467,14 @@ public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
         } else if (logP == Double.NEGATIVE_INFINITY && m_fScale < 10) { // && !m_likelihoodCore.getUseScaling()) {
             m_nScale = 0;
             m_fScale *= 1.01;
-            *//*Log.warning.println("Turning on scaling to prevent numeric instability " + m_fScale);
+            Log.warning.println("Turning on scaling to prevent numeric instability " + m_fScale);
             likelihoodCore.setUseScaling(m_fScale);
             likelihoodCore.unstore();
             hasDirt = Tree.IS_FILTHY;
             traverse(tree.getRoot());
-            calcLogP();*//*
+            calcLogP();
             return logP;
-        }*/
+        }
         return logP;
     }
 
