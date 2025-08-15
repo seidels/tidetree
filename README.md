@@ -6,7 +6,7 @@ TiDeTree is a [BEAST 2[(https://www.beast2.org/) package that enables inference 
 For further information please check out our [publication](https://doi.org/10.1098/rspb.2022.1844) or [preprint](https://doi.org/10.1101/2022.02.14.480422) and find the code to reproduce the analyses in [this GitHub repo](https://github.com/seidels/tidetree-material).
 
 
-To apply TiDeTree to your data, adapt the example XML file in the examples directory. For general guidance on setting prior distributions on parameters, look at [this BEAST2 tutorial](https://taming-the-beast.org/tutorials/Prior-selection/).
+If you want to apply TiDeTree to your data, check out the tutorial [here](https://taming-the-beast.org/tutorials/TiDeTree-Tutorial/). If you are comfortable with BEAST xml hacking, take a look at the example XML file in the examples directory. For general guidance on setting prior distributions on parameters, look at [this BEAST2 tutorial](https://taming-the-beast.org/tutorials/Prior-selection/).
 
 
 ## Installation
@@ -125,7 +125,3 @@ These parameters are then used by the editing model (see the "@editRate" notatio
     <frequencies spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1 0 0 0" estimate="false"/>
   </substModel>
 ```
-
-### TODO:
-- [ ] integrate with [BEAUti](https://www.beast2.org/beauti/) to allow easy package installation
-- [ ] Write a tutorial to be published on taming-the-beast.org 
