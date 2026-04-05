@@ -16,8 +16,7 @@ import java.util.stream.Stream;
 /**
  * @author Sophie Seidel
  **/
-@Description("Computes the transition probabilities from an unedited state into edited states or a silenced" +
-        "state.")
+@Description("Computes the transition probabilities from an unedited state into edited states or a silenced state.")
 public class EditAndSilencingModel extends SubstitutionModel.Base {
 
         final public Input<RealParameter> editRatesInput = new Input<>("editRates",
