@@ -14,45 +14,15 @@ jobs:
       id-token: write
 
     steps:
-      - name: Checkout tidetree
-        uses: actions/checkout@v4
-        with:
-          path: tidetree
-          fetch-depth: 1
+      - uses: actions/checkout@v4
 
-      # build.xml looks for beast2 at ../beast2
-      - name: Checkout beast2
-        uses: actions/checkout@v4
-        with:
-          repository: CompEvol/beast2
-          ref: master
-          path: beast2
+      - run: docker build -t tests .
 
-      # build.xml looks for feast at ../feast
-      - name: Checkout feast
-        uses: actions/checkout@v4
-        with:
-          repository: tgvaughan/feast
-          ref: master
-          path: feast
+      - run: docker run tests
 
-      # build.xml looks for BeastFX at ../BeastFX
-      - name: Checkout BeastFX
-        uses: actions/checkout@v4
-        with:
-          repository: CompEvol/BeastFX
-          ref: master
-          path: BeastFX
-
-      - name: Set up Java 17 (Zulu)
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'zulu'
-
-      - name: Build and run tests
-        working-directory: tidetree
-        run: ant test
+      - name: Print test reports on failure
+        if: failure()
+        run: docker run tests cat /root/test-reports/*.txt 2>/dev/null || true
 
       - name: Run Claude Code Review
         id: claude-review
@@ -68,5 +38,5 @@ jobs:
             phylogenetic framework for single-cell lineage tracing data), please check:
             - Any issues with the likelihood calculations, editing model, or silencing
               model that could silently produce incorrect inference results
-            - New parameters are properly bounded
-            - Implementation is consistent with the mathematical model README
+            - New parameters are properly bounded and prior-constrained
+            - Implementation is consistent with the mathematical model in comments/docs
