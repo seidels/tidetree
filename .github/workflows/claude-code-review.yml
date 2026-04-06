@@ -63,6 +63,18 @@ jobs:
         working-directory: tidetree
         run: ant test
 
+      - name: Register BEAST2 data type services
+        run: |
+          mkdir -p tidetree/build/META-INF/services
+          # Register standard nucleotide/integer data types that Alignment.findDataTypes() needs
+          cat > tidetree/build/META-INF/services/beast.base.evolution.datatype.DataType << 'EOF'
+          beast.base.evolution.datatype.Nucleotide
+          beast.base.evolution.datatype.IntegerData
+          beast.base.evolution.datatype.Binary
+          beast.base.evolution.datatype.StandardData
+          beast.base.evolution.datatype.Aminoacid
+          EOF
+
       - name: Print test reports on failure
         if: failure()
         run: cat tidetree/test-reports/*.txt
