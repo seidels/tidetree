@@ -46,11 +46,11 @@ jobs:
 
       - name: Install JUnit
         run: |
-          mkdir -p beast2/lib/junit
+          mkdir -p beast2/lib
           wget -q https://repo1.maven.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar \
-            -O beast2/lib/junit/junit-4.13.2.jar
+            -O beast2/lib/junit-4.13.2.jar
           wget -q https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar \
-            -O beast2/lib/junit/hamcrest-core-1.3.jar
+            -O beast2/lib/hamcrest-core-1.3.jar
 
       - name: Set up Java 17 (Zulu) with JavaFX
         uses: actions/setup-java@v4
