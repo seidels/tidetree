@@ -63,6 +63,10 @@ jobs:
         working-directory: tidetree
         run: ant test
 
+      - name: Print test reports on failure
+        if: failure()
+        run: cat tidetree/test-reports/*.txt
+
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@v1
