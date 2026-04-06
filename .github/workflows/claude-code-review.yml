@@ -20,15 +20,11 @@ jobs:
           path: tidetree
           fetch-depth: 1
 
-      # build.xml looks for beast2 at ../beast2
-      - name: Checkout beast2
-        uses: actions/checkout@v4
-        with:
-          repository: CompEvol/beast2
-          ref: master
-          path: beast2
+      # Do NOT check out beast2 or BeastFX locally — the build.xml
+      # "build-remote-beast" path downloads beast2 from GitHub without
+      # BeastFX, avoiding the JavaFX dependency entirely.
 
-      # build.xml looks for feast at ../feast
+      # feast is still needed as a sibling directory
       - name: Checkout feast
         uses: actions/checkout@v4
         with:
@@ -36,19 +32,12 @@ jobs:
           ref: master
           path: feast
 
-      # build.xml looks for BeastFX at ../BeastFX
-      - name: Checkout BeastFX
-        uses: actions/checkout@v4
-        with:
-          repository: CompEvol/BeastFX
-          ref: master
-          path: BeastFX
-
-      - name: Set up Java 17 (Zulu)
+      - name: Set up Java 17 (Zulu) with JavaFX
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'zulu'
+          java-package: jdk+fx
 
       - name: Build and run tests
         working-directory: tidetree
@@ -68,5 +57,5 @@ jobs:
             phylogenetic framework for single-cell lineage tracing data), please check:
             - Any issues with the likelihood calculations, editing model, or silencing
               model that could silently produce incorrect inference results
-            - New parameters are properly bounded
-            - Implementation is consistent with the mathematical model README
+            - New parameters are properly bounded and prior-constrained
+            - Implementation is consistent with the mathematical model in comments/docs
