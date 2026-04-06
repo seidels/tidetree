@@ -1,34 +1,41 @@
 <project default="build" basedir=".">
 
+    <property environment="env"/>
+
     <!-- Source, JUnit test code and jar library locations. -->
     <property name="src" location="src"/>
     <property name="test" location="test"/>
     <property name="lib" location="lib"/>
 
     <!-- Location to check for local copy of beast2 repository -->
-    <property name="beastDir" location="../beast2"/>
-    <property name="BeastFXDir" location="../BeastFX"/>
+    <property name="local-beast-source-root" location="../beast2"/>
+    <property name="local-beastfx-source-root" location="../BeastFX"/>
 
     <!-- Location to check for local copy of feast repository -->
-    <property name="feastDir" location="../feast"/>
-    <!-- BEAST 2 currently uses Java 17 -->
-    <property name="sourceVersion" value="17"/>
-    <property name="targetVersion" value="17"/>
+    <property name="local-feast-source-root" location="../feast"/>
+
+    <!-- BEAST 2 currently uses Java 17 language features -->
+    <property name="releaseVersion" value="17"/>
 
     <!-- Directories necessary for all BEAST 2 packages -->
     <property name="doc" location="doc"/>
     <property name="examples" location="examples"/>
     <property name="fxtemplates" location="fxtemplates"/>
 
-    <!-- BEAST branch and version to build against
-         (only different for version tags because of
-         a Github peculiarity) -->
+    <!-- BEAST branch and version to build against -->
     <property name="beast-branch" value="master"/>
     <property name="beast-version" value="master"/>
+    <property name="beastfx-branch" value="master"/>
+    <property name="beastfx-version" value="master"/>
 
     <!-- Names of temporary build/test directories -->
     <property name="build" location="build"/>
-    <property name="build-lib" location="build-lib"/>
+    <property name="build-beast" location="build-beast"/>
+    <property name="build-beastfx" location="build-beastfx"/>
+    <property name="build-feast" location="build-feast"/>
+    <property name="beast-source-root" location="beast-source"/>
+    <property name="beastfx-source-root" location="beastfx-source"/>
+    <property name="feast-source-root" location="feast-source"/>
     <property name="build-test" location="build-test"/>
     <property name="test-reports" location="test-reports"/>
     <property name="dist" location="dist"/>
@@ -36,169 +43,175 @@
 
     <!-- Prepare for compilation -->
     <target name="init">
-
         <available file="version.xml" property="versionAvailable"/>
         <fail unless="versionAvailable">
             ** Required file version.xml does not exist. **
-            If this is a new project, run "ant skeleton" from
-            the command line to create the files required for
-            your BEAST 2 package.
         </fail>
 
-        <!-- Read package name and version from xml file -->
         <xmlproperty file="version.xml" prefix="fromVersionFile" />
         <property name="projName" value="${fromVersionFile.package(name)}" />
         <property name="projVersion" value="${fromVersionFile.package(version)}" />
 
         <mkdir dir="${build}"/>
-        <mkdir dir="${build-lib}"/>
         <mkdir dir="${dist}"/>
-
-        <copy todir="${build-lib}" failonerror="false">
-            <fileset dir="${lib}" includes="*.jar"/>
-        </copy>
     </target>
 
-    <!-- Get beast -->
-
+    <!-- Get beast2 -->
     <target name="find-beast" depends="init">
-        <available file="${beastDir}" property="localBeastAvailable"/>
+        <available file="${local-beast-source-root}" property="localBeastAvailable"/>
     </target>
 
-    <target name="build-remote-beast" depends="find-beast" unless="localBeastAvailable">
-        <echo>No local copy of the beast2 source found at ${beastDir}.</echo>
+    <target name="get-remote-beast" depends="find-beast" unless="localBeastAvailable">
+        <echo>No local copy of the beast2 source found at ${local-beast-source-root}.</echo>
         <echo>Compiling against version ${beast-version} from GitHub.</echo>
-
-        <property name="build-beast" location="build-beast"/>
-        <mkdir dir="${build-beast}"/>
-
-        <get src="https://github.com/CompEvol/beast2/archive/${beast-branch}.zip" dest="${build-beast}/beast.zip"/>
-        <unzip src="${build-beast}/beast.zip" dest="${build-beast}"/>
-        <mkdir dir="${build-beast}/beast2-${beast-version}/build"/>
-        <javac target="${targetVersion}" source="${sourceVersion}"
-            srcdir="${build-beast}/beast2-${beast-version}/src"
-            destdir="${build-beast}/beast2-${beast-version}/build" includeantruntime="false">
-            <classpath>
-                <fileset dir="${build-beast}/beast2-${beast-version}/lib" includes="*.jar"/>
-            </classpath>
-        </javac>
-        <jar jarfile="${build-lib}/beast2.jar" basedir="${build-beast}/beast2-${beast-version}/build" />
-        <copy todir="${build-lib}">
-            <fileset dir="${build-beast}/beast2-${beast-version}/lib" includes="*.jar"/>
+        <mkdir dir="beast-archive"/>
+        <get src="https://github.com/CompEvol/beast2/archive/${beast-branch}.zip"
+             dest="beast-archive/beast.zip"/>
+        <unzip src="beast-archive/beast.zip" dest="beast-archive"/>
+        <copy todir="${beast-source-root}">
+            <fileset dir="beast-archive/beast2-${beast-version}" includes="**/*.*"/>
         </copy>
-
-        <delete dir="${build-beast}" />
+        <delete dir="beast-archive"/>
     </target>
 
-    <target name="build-local-beast" depends="find-beast" if="localBeastAvailable">
-        <echo>Compiling against beast2 source found at ${beastDir}.</echo>
-
-        <property name="build-beast" location="build-beast"/>
-        <mkdir dir="${build-beast}"/>
-
-        <javac target="${targetVersion}" source="${sourceVersion}"
-            srcdir="${beastDir}/src"
-            destdir="${build-beast}" includeantruntime="false">
-            <classpath>
-                <fileset dir="${beastDir}/lib" includes="*.jar"/>
-            </classpath>
-        </javac>
-        <javac target="${targetVersion}" source="${sourceVersion}"
-               srcdir="${beastDir}/test"
-               destdir="${build-beast}" includeantruntime="false">
-            <classpath>
-                <fileset dir="${beastDir}/lib" includes="*.jar"/>
-                <fileset dir="${beastDir}/lib/junit" includes="*.jar"/>
-            </classpath>
-        </javac>
-        <javac target="${targetVersion}" source="${sourceVersion}"
-               srcdir="${BeastFXDir}/src"
-               destdir="${build-beast}" includeantruntime="false">
-            <classpath>
-                <fileset dir="${beastDir}/lib" includes="*.jar"/>
-                <fileset dir="${beastDir}/lib/junit" includes="*.jar"/>
-                <fileset dir="${BeastFXDir}/locallib" includes="*.jar"/>
-            </classpath>
-        </javac>
-        <jar jarfile="${build-lib}/beast2.jar" basedir="${build-beast}" />
-        <copy todir="${build-lib}">
-            <fileset dir="${beastDir}/lib" includes="*.jar"/>
+    <target name="get-local-beast" depends="find-beast" if="localBeastAvailable">
+        <echo>Compiling against beast2 source found at ${local-beast-source-root}.</echo>
+        <copy todir="${beast-source-root}">
+            <fileset dir="${local-beast-source-root}" includes="**/*.*"/>
         </copy>
-
-        <delete dir="${build-beast}" />
     </target>
 
-    <target name="build-beast" depends="build-local-beast,build-remote-beast"/>
-    
+    <target name="build-beast" depends="get-local-beast,get-remote-beast">
+        <mkdir dir="${build-beast}"/>
+        <javac srcdir="${beast-source-root}/src"
+               destdir="${build-beast}"
+               release="${releaseVersion}"
+               encoding="UTF-8"
+               includeantruntime="false"
+               fork="yes">
+            <classpath>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+        <javac srcdir="${beast-source-root}/test"
+               destdir="${build-beast}"
+               release="${releaseVersion}"
+               encoding="UTF-8"
+               includeantruntime="false"
+               fork="yes">
+            <classpath>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Get BeastFX -->
+    <target name="find-beastfx" depends="init">
+        <available file="${local-beastfx-source-root}" property="localBeastFXAvailable"/>
+    </target>
+
+    <target name="get-local-beastfx" depends="find-beastfx" if="localBeastFXAvailable">
+        <echo>Compiling against BeastFX source found at ${local-beastfx-source-root}.</echo>
+        <copy todir="${beastfx-source-root}">
+            <fileset dir="${local-beastfx-source-root}" includes="**/*.*"/>
+        </copy>
+    </target>
+
+    <target name="get-remote-beastfx" depends="find-beastfx" unless="localBeastFXAvailable">
+        <echo>No local copy of the BeastFX source found at ${local-beastfx-source-root}.</echo>
+        <mkdir dir="beastfx-archive"/>
+        <get src="https://github.com/CompEvol/BeastFX/archive/refs/heads/${beastfx-branch}.zip"
+             dest="beastfx-archive/beastfx.zip"/>
+        <unzip src="beastfx-archive/beastfx.zip" dest="beastfx-archive"/>
+        <copy todir="${beastfx-source-root}">
+            <fileset dir="beastfx-archive/BeastFX-${beastfx-version}" includes="**/*.*"/>
+        </copy>
+        <delete dir="beastfx-archive"/>
+    </target>
+
+    <target name="build-beastfx" depends="get-local-beastfx,get-remote-beastfx,build-beast">
+        <mkdir dir="${build-beastfx}"/>
+        <javac srcdir="${beastfx-source-root}/src"
+               destdir="${build-beastfx}"
+               release="${releaseVersion}"
+               includeantruntime="false"
+               fork="yes">
+            <classpath>
+                <fileset dir="${beastfx-source-root}/locallib" includes="**/*.jar"/>
+                <fileset dir="${env.JAVA_FX_HOME}" includes="**/*.jar"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+                <pathelement path="${build-beast}"/>
+            </classpath>
+        </javac>
+    </target>
+
     <!-- Get feast -->
     <target name="find-feast" depends="init">
-        <available file="${feastDir}" property="localFeastAvailable"/>
+        <available file="${local-feast-source-root}" property="localFeastAvailable"/>
     </target>
 
-
-    <target name="build-remote-feast" depends="find-feast" unless="localFeastAvailable">
-        <echo>No local copy of the feast source found at ${feastDir}.</echo>
-        <echo>Compiling against version ${beast-version} from GitHub.</echo>
-
-        <property name=" build-feast" location=" build-feast"/>
-        <mkdir dir="${ build-feast}"/>
-
-        <get src="https://github.com/tgvaughan/feast/archive/master.zip" dest="${ build-feast}/feast.zip"/>
-        <unzip src="${ build-feast}/feast.zip" dest="${ build-feast}"/>
-        <mkdir dir="${ build-feast}/feast-master/build"/>
-        <javac target="${targetVersion}" source="${sourceVersion}"
-               srcdir="${ build-feast}/feast-master/src"
-               destdir="${ build-feast}/feast-master/build" includeantruntime="false">
-            <classpath>
-                <fileset dir="${ build-feast}/feast-master/lib" includes="*.jar"/>
-                <fileset dir="${build-lib}" includes="*.jar"/>
-            </classpath>
-        </javac>
-        <jar jarfile="${build-lib}/feast.jar" basedir="${ build-feast}/feast-master/build" />
-        <copy todir="${build-lib}">
-            <fileset dir="${ build-feast}/feast-master/lib" includes="*.jar"/>
+    <target name="get-local-feast" depends="find-feast" if="localFeastAvailable">
+        <echo>Compiling against feast source found at ${local-feast-source-root}.</echo>
+        <copy todir="${feast-source-root}">
+            <fileset dir="${local-feast-source-root}" includes="**/*.*"/>
         </copy>
-
-        <delete dir="${ build-feast}" />
     </target>
 
-    <target name="build-local-feast" depends="find-feast" if="localFeastAvailable">
-        <echo>Compiling against local feast source found at ${feastDir}.</echo>
+    <target name="get-remote-feast" depends="find-feast" unless="localFeastAvailable">
+        <echo>No local copy of feast found at ${local-feast-source-root}.</echo>
+        <mkdir dir="feast-archive"/>
+        <get src="https://github.com/tgvaughan/feast/archive/master.zip"
+             dest="feast-archive/feast.zip"/>
+        <unzip src="feast-archive/feast.zip" dest="feast-archive"/>
+        <copy todir="${feast-source-root}">
+            <fileset dir="feast-archive/feast-master" includes="**/*.*"/>
+        </copy>
+        <delete dir="feast-archive"/>
+    </target>
 
-        <property name="build-feast" location="build-feast"/>
+    <target name="build-feast" depends="get-local-feast,get-remote-feast,build-beast,build-beastfx">
         <mkdir dir="${build-feast}"/>
-
-        <javac target="${targetVersion}" source="${sourceVersion}"
-               srcdir="${feastDir}/src"
-               destdir="${build-feast}" includeantruntime="false">
-            <include name="feast/**/**" />
+        <javac srcdir="${feast-source-root}/src"
+               destdir="${build-feast}"
+               release="${releaseVersion}"
+               includeantruntime="false"
+               fork="yes">
+            <include name="feast/**/**"/>
             <classpath>
-                <fileset dir="${build-lib}" includes="*.jar"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+                <pathelement path="${build-beast}"/>
+                <pathelement path="${build-beastfx}"/>
             </classpath>
         </javac>
-        <jar jarfile="${build-lib}/feast.jar" basedir="${build-feast}" />
-
-        <delete dir="${build-feast}" />
     </target>
 
-    <target name="build-feast" depends="build-local-feast,build-remote-feast"/>
-
-
+    <!-- Set up package dir so BEASTClassLoader/findDataTypes works at test time -->
+    <target name="install-dependencies" depends="build-beast">
+        <mkdir dir="deps/BEAST.base/lib"/>
+        <jar jarfile="deps/BEAST.base/lib/beast2.jar" basedir="${build-beast}"/>
+        <echo file="deps/BEAST.base/version.xml">&lt;package name="BEAST.base" version="2.7.0"/&gt;</echo>
+    </target>
 
     <!-- Compile -->
-    <target name="compile" depends="build-beast, build-feast">
-        <javac target="${targetVersion}" source="${sourceVersion}" srcdir="${src}" destdir="${build}" includeantruntime="false">
+    <target name="compile" depends="build-beast,build-beastfx,build-feast,install-dependencies">
+        <javac release="${releaseVersion}"
+               srcdir="${src}" destdir="${build}"
+               includeantruntime="false"
+               encoding="UTF-8"
+               fork="yes">
             <classpath>
-                <pathelement path=""/>
-                <fileset dir="${build-lib}" includes="*.jar"/>
+                <fileset dir="${lib}" includes="**/*.jar" erroronmissingdir="false"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+                <pathelement path="${build-beast}"/>
+                <pathelement path="${build-beastfx}"/>
+                <pathelement path="${build-feast}"/>
             </classpath>
         </javac>
     </target>
 
     <target name="copy-resources" depends="compile">
         <copy todir="${build}">
-            <fileset dir="${src}"
-                     includes="**/*.png" />
+            <fileset dir="${src}" includes="**/*.png"/>
         </copy>
     </target>
 
@@ -208,38 +221,46 @@
         <mkdir dir="${test-reports}"/>
     </target>
 
-
     <!-- Compile unit tests -->
     <target name="compile-test" depends="init-test,compile,copy-resources">
-        <javac target="${targetVersion}" source="${sourceVersion}" srcdir="${test}" destdir="${build-test}" includeantruntime="false">
+        <javac release="${releaseVersion}"
+               srcdir="${test}" destdir="${build-test}"
+               includeantruntime="false"
+               encoding="UTF-8"
+               fork="yes">
             <classpath>
-                <pathelement path="${build}" />
-                <fileset dir="${build-lib}" includes="*.jar"/>
+                <pathelement path="${build}"/>
+                <fileset dir="${lib}" includes="**/*.jar" erroronmissingdir="false"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+                <pathelement path="${build-beast}"/>
+                <pathelement path="${build-feast}"/>
             </classpath>
         </javac>
     </target>
 
-
     <!-- Run unit tests -->
     <target name="test" depends="compile-test">
-        <junit printsummary="yes" failureproperty="testFailed" showoutput="true">
+        <junit printsummary="yes" failureproperty="testFailed" showoutput="true"
+               maxmemory="4G">
+            <jvmarg line="-Dbeast.user.package.dir=./deps"/>
             <classpath>
-                <pathelement path="${build}" />
-                <pathelement path="${build-test}" />
-                <fileset dir="${build-lib}" includes="*.jar"/>
+                <pathelement path="${build}"/>
+                <pathelement path="${build-test}"/>
+                <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+                <pathelement path="${build-beast}"/>
+                <pathelement path="${build-beastfx}"/>
+                <pathelement path="${build-feast}"/>
             </classpath>
             <batchtest fork="yes" todir="${test-reports}">
                 <fileset dir="${test}">
                     <include name="**/*Test.java"/>
                 </fileset>
                 <formatter type="plain"/>
-                <!--formatter type="plain" usefile="false"/--> <!-- to screen -->
             </batchtest>
         </junit>
 
         <fail if="testFailed" status="1" message="Unit test failed."/>
     </target>
-
 
     <!-- Create BEAST 2 package -->
     <target name="build" depends="compile,copy-resources">
@@ -251,40 +272,40 @@
         <mkdir dir="${pack}/lib"/>
         <mkdir dir="${pack}/doc"/>
 
-        <jar jarfile="${pack}/${fullName}.src.jar" basedir="${src}" />
+        <jar jarfile="${pack}/${fullName}.src.jar" basedir="${src}"/>
 
-        <mkdir dir="${lib}" />
+        <mkdir dir="${lib}"/>
         <copy todir="${pack}/lib">
-            <fileset dir="${lib}" includes="*.jar" />
+            <fileset dir="${lib}" includes="*.jar"/>
         </copy>
-        <jar jarfile="${pack}/lib/${fullName}.jar" basedir="${build}" />
+        <jar jarfile="${pack}/lib/${fullName}.jar" basedir="${build}"/>
 
-        <copy file="README.md" tofile="${pack}/README" />
-        <copy file="COPYING" todir="${pack}" failonerror="false" quiet="true" />
-        <copy file="LICENSE" todir="${pack}" failonerror="false" quiet="true" />
+        <copy file="README.md" tofile="${pack}/README"/>
+        <copy file="COPYING" todir="${pack}" failonerror="false" quiet="true"/>
+        <copy file="LICENSE" todir="${pack}" failonerror="false" quiet="true"/>
         <copy todir="${pack}">
-            <fileset dir="${lib}" includes="LICENSE*" />
+            <fileset dir="${lib}" includes="LICENSE*"/>
         </copy>
 
-        <mkdir dir="${examples}" />
+        <mkdir dir="${examples}"/>
         <copy todir="${pack}/examples">
-            <fileset dir="${examples}" includes="**/*.xml" />
-            <fileset dir="${examples}" includes="**/*.fasta" />
+            <fileset dir="${examples}" includes="**/*.xml"/>
+            <fileset dir="${examples}" includes="**/*.fasta"/>
         </copy>
 
-        <mkdir dir="${fxtemplates}" />
+        <mkdir dir="${fxtemplates}"/>
         <copy todir="${pack}/fxtemplates">
-            <fileset dir="${fxtemplates}" includes="*.xml" />
+            <fileset dir="${fxtemplates}" includes="*.xml"/>
         </copy>
 
-        <mkdir dir="${doc}" />
+        <mkdir dir="${doc}"/>
         <copy todir="${pack}/doc">
             <fileset dir="${doc}" includes="*.tex,*.doc,*.lyx,*.txt"/>
         </copy>
 
-        <copy file="version.xml" todir="${pack}" />
+        <copy file="version.xml" todir="${pack}"/>
 
-        <zip destfile="${dist}/${fullName}.zip" basedir="${pack}" />
+        <zip destfile="${dist}/${fullName}.zip" basedir="${pack}"/>
 
         <delete dir="${pack}"/>
 
@@ -293,14 +314,19 @@
         <echo>** Package ${dist}/${fullName}.zip created successfuly! **</echo>
     </target>
 
-
     <!-- Revert to pristine state. -->
     <target name="clean">
-        <delete dir="${build}" />
-        <delete dir="${build-lib}" />
-        <delete dir="${dist}" />
-        <delete dir="${build-test}" />
-        <delete dir="${test-reports}" />
+        <delete dir="${build}"/>
+        <delete dir="${build-beast}"/>
+        <delete dir="${build-beastfx}"/>
+        <delete dir="${build-feast}"/>
+        <delete dir="${beast-source-root}"/>
+        <delete dir="${beastfx-source-root}"/>
+        <delete dir="${feast-source-root}"/>
+        <delete dir="${dist}"/>
+        <delete dir="${build-test}"/>
+        <delete dir="${test-reports}"/>
+        <delete dir="deps"/>
     </target>
 
 </project>
