@@ -179,6 +179,8 @@
             <include name="feast/**/**"/>
             <classpath>
                 <fileset dir="${beast-source-root}/lib" includes="**/*.jar"/>
+                <fileset dir="${beastfx-source-root}/locallib" includes="**/*.jar"/>
+                <fileset dir="${env.JAVA_FX_HOME}" includes="**/*.jar"/>
                 <pathelement path="${build-beast}"/>
                 <pathelement path="${build-beastfx}"/>
             </classpath>
