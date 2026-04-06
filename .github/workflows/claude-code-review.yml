@@ -20,9 +20,21 @@ jobs:
           path: tidetree
           fetch-depth: 1
 
-      # Do NOT check out beast2 or BeastFX locally — the build.xml
-      # "build-remote-beast" path downloads beast2 from GitHub without
-      # BeastFX, avoiding the JavaFX dependency entirely.
+      # build.xml looks for beast2 at ../beast2
+      - name: Checkout beast2
+        uses: actions/checkout@v4
+        with:
+          repository: CompEvol/beast2
+          ref: master
+          path: beast2
+
+      # build.xml looks for BeastFX at ../BeastFX (needed by feast)
+      - name: Checkout BeastFX
+        uses: actions/checkout@v4
+        with:
+          repository: CompEvol/BeastFX
+          ref: master
+          path: BeastFX
 
       # feast is still needed as a sibling directory
       - name: Checkout feast
