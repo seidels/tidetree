@@ -7,7 +7,8 @@ import beast.base.inference.StateNodeInitialiser;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.type.RealScalar;
+import beast.base.spec.domain.PositiveReal;
 import beast.base.util.Randomizer;
 
 import java.util.List;
@@ -20,9 +21,9 @@ import java.util.stream.IntStream;
 public class StartingTree extends Tree implements StateNodeInitialiser {
     final public Input<Alignment> taxaInput = new Input<>("taxa", "set of taxa to initialise tree specified by alignment", Input.Validate.REQUIRED);
 
-    final public Input<RealParameter> rootHeightInput = new Input<>("rootHeight", "Time from beginning of the experiment until sequencing", Input.Validate.REQUIRED);
-    final public Input<RealParameter> editDurationInput = new Input<>("editDuration", "Time duration from edit start to edit stop", Input.Validate.REQUIRED);
-    final public Input<RealParameter> editHeightInput = new Input<>("editHeight", "Time from the onset of edit until sequencing", Input.Validate.REQUIRED);
+    final public Input<RealScalar<PositiveReal>> rootHeightInput = new Input<>("rootHeight", "Time from beginning of the experiment until sequencing", Input.Validate.REQUIRED);
+    final public Input<RealScalar<PositiveReal>> editDurationInput = new Input<>("editDuration", "Time duration from edit start to edit stop", Input.Validate.REQUIRED);
+    final public Input<RealScalar<PositiveReal>> editHeightInput = new Input<>("editHeight", "Time from the onset of edit until sequencing", Input.Validate.REQUIRED);
     final public Input<Boolean> sequencesAreClusteredInput = new Input<>("sequencesAreClustered", "Is true, if identical sequences appear in clusters within the alignment", true, Input.Validate.REQUIRED);
     final public Input<Integer> nClustersInput =  new Input<>("nClusters", "Number of clusters, where each cluster consists of identical sequences. " +
             "This input is only used when sequences are clustered.");
@@ -49,9 +50,9 @@ public class StartingTree extends Tree implements StateNodeInitialiser {
         nTaxa = taxanames.size();
         iIntNode = nTaxa;
 
-        rootHeight = rootHeightInput.get().getValue();
-        editDuration = editDurationInput.get().getValue();
-        editHeight = editHeightInput.get().getValue();
+        rootHeight = rootHeightInput.get().get();
+        editDuration = editDurationInput.get().get();
+        editHeight = editHeightInput.get().get();
 
         if (editHeight > rootHeight){
             throw new RuntimeException("editHeight has to be smaller or equal than rootHeight");

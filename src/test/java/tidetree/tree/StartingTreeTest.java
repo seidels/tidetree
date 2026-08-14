@@ -3,7 +3,9 @@ package tidetree.tree;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.alignment.TaxonSet;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
+
+import beast.base.spec.domain.PositiveReal;
 import tidetree.evolution.datatype.EditData;
 import beast.base.util.Randomizer;
 import org.junit.Before;
@@ -17,9 +19,9 @@ public class StartingTreeTest {
     private StartingTree identicalSequenceTree, nonIdenticalSequenceTree, tooFewClustersTree, singleLeafTree;
     private StartingTree identicalSequenceTreeClusteringFalse, nonIdenticalSequenceTreeClusteringFalse,
             nonIdenticalNonClusteredSequenceTreeClusteringFalse;
-    RealParameter rootHeight = new RealParameter("32.0");
-    RealParameter editHeight = new RealParameter("25.0");
-    RealParameter editDuration = new RealParameter("2.0");
+    RealScalarParam<PositiveReal> rootHeight = new RealScalarParam<>(32.0, PositiveReal.INSTANCE);
+    RealScalarParam<PositiveReal> editHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+    RealScalarParam<PositiveReal> editDuration = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
 
 
     @Before
