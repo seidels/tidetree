@@ -35,18 +35,18 @@ public class StartingTreeTest {
         scarDat.initByName("nrOfStates", 3);
 
         singleLeaf = new Alignment();
-        singleLeaf.initByName("sequence", a, "userDataType", scarDat, "stateCount", 3);
+        singleLeaf.initByName("sequence", a, "userDataType", scarDat, "statecount", 3);
 
         identicalSequenceAlignment = new Alignment();
-        identicalSequenceAlignment.initByName("sequence", a, "sequence", b, "userDataType", scarDat, "stateCount", 3);
+        identicalSequenceAlignment.initByName("sequence", a, "sequence", b, "userDataType", scarDat, "statecount", 3);
 
         nonIdenticalSequenceAlignment = new Alignment();
         nonIdenticalSequenceAlignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "sequence", e,
-                "userDataType", scarDat, "stateCount", 3);
+                "userDataType", scarDat, "statecount", 3);
 
         nonIdenticalNonClusteredSequenceAlignment = new Alignment();
         nonIdenticalNonClusteredSequenceAlignment.initByName("sequence", a, "sequence", c, "sequence", b, "sequence", d, "sequence", e,
-                "userDataType", scarDat, "stateCount", 3);
+                "userDataType", scarDat, "statecount", 3);
 
         // add sampling times
         TaxonSet singleTaxon = new TaxonSet();

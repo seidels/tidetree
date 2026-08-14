@@ -26,7 +26,7 @@ public class TreeLikelihoodWithEditWindowTest {
         // init alignment
         Sequence a = new Sequence("0", "0,");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "integer", "stateCount", 4);
+        alignment.initByName("sequence", a, "dataType", "integer", "statecount", 4);
 
         //init tree
         tree1 = new TreeParser();
@@ -74,7 +74,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence a = new Sequence("0", "0,");
         Sequence b = new Sequence("1", "0,");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "sequence", b, "dataType", "integer", "stateCount", 4);
+        alignment.initByName("sequence", a, "sequence", b, "dataType", "integer", "statecount", 4);
 
         //init tree
         tree1 = new TreeParser();
@@ -139,7 +139,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence a = new Sequence("0", "0,");
         Sequence b = new Sequence("1", "0,");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "sequence", b, "dataType", "integer", "stateCount", 4);
+        alignment.initByName("sequence", a, "sequence", b, "dataType", "integer", "statecount", 4);
 
         //init tree
         tree1 = new TreeParser();
@@ -207,7 +207,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence b2 = new Sequence("1", "1,");
 
         Alignment alignment2 = new Alignment();
-        alignment2.initByName("sequence", a, "sequence", b2, "dataType", "integer", "stateCount", 3);
+        alignment2.initByName("sequence", a, "sequence", b2, "dataType", "integer", "statecount", 3);
 
         tree2 = new TreeParser();
         tree2.initByName("IsLabelledNewick", true, "taxa", alignment2, "newick",
@@ -269,7 +269,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence b3 = new Sequence("1", "3,");
 
         Alignment alignment3 = new Alignment();
-        alignment3.initByName("sequence", a, "sequence", b3, "dataType", "integer", "stateCount", 3);
+        alignment3.initByName("sequence", a, "sequence", b3, "dataType", "integer", "statecount", 3);
 
         //init tree
         tree3 = new TreeParser();
@@ -336,7 +336,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence b3 = new Sequence("1", "3,3");
 
         Alignment alignment3 = new Alignment();
-        alignment3.initByName("sequence", a, "sequence", b3, "dataType", "integer", "stateCount", 4);
+        alignment3.initByName("sequence", a, "sequence", b3, "dataType", "integer", "statecount", 4);
 
         //init tree
         tree3 = new TreeParser();
@@ -401,7 +401,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence b2 = new Sequence("1", "1,");
 
         Alignment alignment2 = new Alignment();
-        alignment2.initByName("sequence", a, "sequence", b2, "dataType", "integer", "stateCount", 3);
+        alignment2.initByName("sequence", a, "sequence", b2, "dataType", "integer", "statecount", 3);
 
         //init tree
         tree2 = new TreeParser();
@@ -451,7 +451,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence b2 = new Sequence("1", "2,");
 
         Alignment alignment2 = new Alignment();
-        alignment2.initByName("sequence", a, "sequence", b2, "dataType", "integer", "stateCount", 3);
+        alignment2.initByName("sequence", a, "sequence", b2, "dataType", "integer", "statecount", 3);
 
         //init tree
         tree2 = new TreeParser();
@@ -522,7 +522,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence c = new Sequence("2", "2,");
 
         Alignment alignment4 = new Alignment();
-        alignment4.initByName("sequence", a, "sequence", b2, "sequence", c, "dataType", "integer", "stateCount", 3);
+        alignment4.initByName("sequence", a, "sequence", b2, "sequence", c, "dataType", "integer", "statecount", 3);
 
 
         //init trees
@@ -575,7 +575,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence d = new Sequence("3", "2,");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "dataType", "integer", "stateCount", 4);
+        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "dataType", "integer", "statecount", 4);
 
         String wrongAcceptedTree = "((0[&cluster=0]:18.987792267733195,2[&cluster=1]:18.987792267733195)5[&cluster=1]:13.012207732266805,(1[&cluster=0]:30.196436618358874,3[&cluster=1]:30.196436618358874)4[&cluster=0]:1.8035633816411263)6[&cluster=0]:0.0;";
         //init trees
@@ -633,7 +633,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence e = new Sequence("4", "3,3");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "sequence", e, "dataType", "integer", "stateCount", 4);
+        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "sequence", e, "dataType", "integer", "statecount", 4);
 
         String newickTree = "((0[&cluster=0]:26.0,(1[&cluster=1]:13.0,2[&cluster=1]:13.0)5[&cluster=1]:13.0)7[&cluster=0]:6.0,(3[&cluster=2]:24.0,4[&cluster=3]:24.0)6[&cluster=1]:8.0)8:0.0;";
         //init trees
@@ -713,7 +713,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence e = new Sequence("4", "3,3");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "sequence", e, "dataType", "integer", "stateCount", 4);
+        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "sequence", e, "dataType", "integer", "statecount", 4);
 
         String newickTree = "((0[&cluster=0]:26.0,(1[&cluster=1]:13.0,2[&cluster=1]:13.0)5[&cluster=1]:13.0)7[&cluster=0]:6.0,(3[&cluster=2]:24.0,4[&cluster=3]:24.0)6[&cluster=1]:8.0)8:0.0;";
         //init trees
@@ -806,7 +806,7 @@ public class TreeLikelihoodWithEditWindowTest {
         RealParameter origin = new RealParameter("42");
 
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "sequence", e, "dataType", "integer", "stateCount", 4);
+        alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "sequence", e, "dataType", "integer", "statecount", 4);
 
         String newickTree = "((0[&cluster=0]:26.0,(1[&cluster=1]:13.0,2[&cluster=1]:13.0)5[&cluster=1]:13.0)7[&cluster=0]:6.0,(3[&cluster=2]:24.0,4[&cluster=3]:24.0)6[&cluster=1]:8.0)8:0.0;";
         //init trees

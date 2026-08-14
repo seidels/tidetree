@@ -83,7 +83,7 @@ public class SimulatedAlignmentTest{
         Alignment alignment = new Alignment();
         EditData editData = new EditData();
         editData.initByName("nrOfStates", 4);
-        alignment.initByName("sequence", a, "userDataType", editData, "stateCount", 4);
+        alignment.initByName("sequence", a, "userDataType", editData, "statecount", 4);
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -134,7 +134,7 @@ public class SimulatedAlignmentTest{
         Alignment alignment = new Alignment();
         EditData editData = new EditData();
         editData.initByName("nrOfStates", 4);
-        alignment.initByName("sequence", a, "userDataType", editData, "stateCount", 4);
+        alignment.initByName("sequence", a, "userDataType", editData, "statecount", 4);
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
@@ -182,7 +182,7 @@ public class SimulatedAlignmentTest{
 
         Sequence a = new Sequence("0", "0,");
         Alignment alignment = new Alignment();
-        alignment.initByName("sequence", a, "dataType", "integer", "stateCount", 3);
+        alignment.initByName("sequence", a, "dataType", "integer", "statecount", 3);
 
         Tree tree1 = new TreeParser();
         tree1.initByName("IsLabelledNewick", true, "taxa", alignment, "newick",
