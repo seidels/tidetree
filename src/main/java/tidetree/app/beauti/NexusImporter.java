@@ -1,17 +1,17 @@
-package tidetree.util;
+package tidetree.app.beauti;
 
 import java.io.File;
 import java.util.*;
+import tidetree.util.NexusParser;
 
 import beast.base.evolution.alignment.Sequence;
 import beastfx.app.inputeditor.AlignmentImporter;
-import beastfx.app.util.Alert;
 
 import beast.base.core.BEASTInterface;
 import beast.base.core.Description;
+import beast.base.core.Log;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.FilteredAlignment;
-import beastfx.app.inputeditor.BeautiAlignmentProvider;
 
 @Description("NEXUS file importer")
 public class NexusImporter implements AlignmentImporter {
@@ -54,7 +54,7 @@ public class NexusImporter implements AlignmentImporter {
                                 + parser.filteredAlignments.get(i % 10000 - 1).getID() + "\n";
                     }
                     overlaps += "The first thing you might want to do is delete some of these partitions.";
-                    Alert.showMessageDialog(null, overlaps);
+                    Log.warning(overlaps);
                 }
                 /** add alignments **/
                 for (Alignment data : parser.filteredAlignments) {
@@ -72,7 +72,7 @@ public class NexusImporter implements AlignmentImporter {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            Alert.showMessageDialog(null, "Loading of " + file.getPath() + " failed: " + ex.getMessage());
+            Log.warning("Loading of " + file.getPath() + " failed: " + ex.getMessage());
             return null;
         }
         return selectedBEASTObjects;
