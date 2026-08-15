@@ -8,7 +8,7 @@ import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.domain.NonNegativeReal;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
-import beast.base.evolution.branchratemodel.StrictClockModel;
+import beast.base.spec.evolution.branchratemodel.StrictClockModel;
 import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.tree.Node;
