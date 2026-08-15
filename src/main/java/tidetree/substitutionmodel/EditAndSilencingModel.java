@@ -2,14 +2,19 @@ package tidetree.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.type.RealVector;
+import beast.base.spec.type.RealScalar;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.NonNegativeReal;
+
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.datatype.IntegerData;
 import beast.base.evolution.substitutionmodel.EigenDecomposition;
-import beast.base.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.Base;
 import beast.base.evolution.tree.Node;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -17,23 +22,23 @@ import java.util.stream.Stream;
  * @author Sophie Seidel
  **/
 @Description("Computes the transition probabilities from an unedited state into edited states or a silenced state.")
-public class EditAndSilencingModel extends SubstitutionModel.Base {
+public class EditAndSilencingModel extends Base {
 
-        final public Input<RealParameter> editRatesInput = new Input<>("editRates",
+        final public Input<RealVector<NonNegativeReal>> editRatesInput = new Input<>("editRates",
                 "Rates at which edits are introduced into " +
                         "the genomic barcode during the editing window",
 
                 Input.Validate.REQUIRED);
 
-        final public Input<RealParameter> silencingRateInput = new Input<>("silencingRate",
+        final public Input<RealScalar<NonNegativeReal>> silencingRateInput = new Input<>("silencingRate",
                 "Rate at which barcodes are silenced " +
                         "throughout the entire experiment", Input.Validate.REQUIRED);
 
 
-        public Input<RealParameter> editHeightInput = new Input<>("editHeight",
+        public Input<RealScalar<PositiveReal>> editHeightInput = new Input<>("editHeight",
                 "Duration between the onset of edit and sampling of the cells", Input.Validate.REQUIRED);
 
-        public Input<RealParameter> editDurationInput = new Input<>("editDuration",
+        public Input<RealScalar<PositiveReal>> editDurationInput = new Input<>("editDuration",
                 "Duration of the edit process", Input.Validate.REQUIRED);
 
 
@@ -44,18 +49,18 @@ public class EditAndSilencingModel extends SubstitutionModel.Base {
         protected boolean updateMatrixLoss = true;
 
 
-        RealParameter editHeightP;
-        RealParameter editDurationP;
+        RealScalar editHeightP;
+        RealScalar editDurationP;
         double[] frequencies;
         double[][] rateMatrix;
-        RealParameter editRate_;
-        RealParameter silencingRate_;
+        RealVector editRate_;
+        RealScalar silencingRate_;
 
     @Override
     public void initAndValidate() {
 
         // one state for each edit type + unedited + lost
-        nrOfStates = editRatesInput.get().getDimension() + 2;
+        nrOfStates = editRatesInput.get().size() + 2;
         rateMatrix = new double[nrOfStates][nrOfStates];
 
         editRate_ = editRatesInput.get();
@@ -65,9 +70,9 @@ public class EditAndSilencingModel extends SubstitutionModel.Base {
         //double sumEditRates = 0;
 
         // add edit rates to rate matrix
-        for (int i=0; i<editRate_.getDimension(); i++){
+        for (int i=0; i<editRate_.size(); i++){
 
-            double editRate = editRate_.getValues()[i];
+            double editRate = editRate_.get(i);
             if (editRate < 0) {
                 throw new RuntimeException("All edit rates must be positive!");
             }
@@ -76,7 +81,7 @@ public class EditAndSilencingModel extends SubstitutionModel.Base {
         }
 
         silencingRate_ = silencingRateInput.get();
-        double silencingRate = silencingRate_.getValue();
+        double silencingRate = silencingRate_.get();
 
         if (silencingRate < 0) {
             throw new RuntimeException("Loss rate must be positive!");
@@ -120,11 +125,14 @@ public class EditAndSilencingModel extends SubstitutionModel.Base {
     @Override
     public void getTransitionProbabilities(Node node, double startTime, double endTime, double rate, double[] matrix) {
 
-        double silencingRate = silencingRate_.getValue();
-        Double[] editRates = editRate_.getValues();
+        double silencingRate = silencingRate_.get();
+        double[] editRates = new double[editRate_.size()];
+	for (int i = 0; i < editRates.length; i++) {
+	    editRates[i] = editRate_.get(i);
+	}
 
-        double editHeight = editHeightP.getValue();
-        double editDuration = editDurationP.getValue();
+        double editHeight = editHeightP.get();
+        double editDuration = editDurationP.get();
 
         //multiply by joint branch rate from site model
         silencingRate *= rate;
@@ -138,8 +146,7 @@ public class EditAndSilencingModel extends SubstitutionModel.Base {
         // calculate transition probabilities for loss process
         getLossProbabilities(matrix, expOfDeltaLoss);
 
-        Stream<Double> editSum = Stream.of(editRates);
-        Double editRateSum = editSum.reduce(0.0, (subtotal, element) -> subtotal + element);
+        double editRateSum = Arrays.stream(editRates).sum();
 
         // for loss & edit, add the edit transition probabilities
         if ( (endTime >= (editHeight - editDuration)) & (endTime < editHeight) & (editRateSum>0) ) {
@@ -168,9 +175,18 @@ public class EditAndSilencingModel extends SubstitutionModel.Base {
         return frequencies;
     }
 
-    public double getEditHeight(){return editHeightP.getValue();}
+    @Override
+    public double[] getRateMatrix(Node node) {
+	double[] flat = new double[nrOfStates * nrOfStates];
+      for (int i = 0; i < nrOfStates; i++) {
+          System.arraycopy(rateMatrix[i], 0, flat, nrOfStates * i, nrOfStates);
+      }
+      return flat;
+  }
 
-    public double getEditDuration(){return editDurationP.getValue();}
+    public double getEditHeight(){return editHeightP.get();}
+
+    public double getEditDuration(){return editDurationP.get();}
 
     public double[][] getRateMatrix(){return rateMatrix;}
 }

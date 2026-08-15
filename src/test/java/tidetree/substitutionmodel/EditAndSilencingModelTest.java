@@ -1,7 +1,14 @@
 package tidetree.substitutionmodel;
 
-import beast.base.inference.parameter.RealParameter;
-import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.NonNegativeReal;
+
+
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.inference.parameter.SimplexParam;
+
 import beast.base.evolution.tree.Node;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,15 +26,17 @@ public class EditAndSilencingModelTest {
     @Before
     public void setup(){
 
-        RealParameter silencingRate = new RealParameter("1.0");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter editHeight = new RealParameter("25.0");
-        RealParameter editDuration = new RealParameter("2.0");
+       	RealScalarParam<NonNegativeReal> silencingRate = new RealScalarParam<>(1.0, NonNegativeReal.INSTANCE);
+	RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+	RealScalarParam<PositiveReal> editHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+	RealScalarParam<PositiveReal> editDuration = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
-        Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs,
-                "estimate", false);
+
+	SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
+	Frequencies frequencies = new Frequencies();
+	frequencies.initByName("frequencies", freqs,
+			       "estimate", false);
+
 
         editModel = new EditAndSilencingModel();
         editModel.initByName("editRates", scarRates,
@@ -51,12 +60,12 @@ public class EditAndSilencingModelTest {
         correctMatrix[0][0] = 0;
         for (int i=1; i<rateM.length-1; i++){
             // insert scar rates into first row
-            correctMatrix[0][i] = editModel.editRate_.getValues()[i-1];
+            correctMatrix[0][i] = editModel.editRate_.get(i-1);
 
             // insert loss rates into last column
-            correctMatrix[i-1][rateM.length-1] = editModel.silencingRate_.getValue();
+            correctMatrix[i-1][rateM.length-1] = editModel.silencingRate_.get();
         }
-        correctMatrix[rateM.length-2][rateM.length-1] = editModel.silencingRate_.getValue();
+        correctMatrix[rateM.length-2][rateM.length-1] = editModel.silencingRate_.get();
 
         for (int i=0; i<rateM.length; i++){
             assertArrayEquals("Assert matrix entries", correctMatrix[i], rateM[i], 1e-15);
@@ -140,15 +149,17 @@ public class EditAndSilencingModelTest {
     public void test_different_parameters(){
 
         //set up edit model
-        RealParameter silencingRate = new RealParameter("0.04");
-        RealParameter scarRates = new RealParameter("10.0 20.0");
-        RealParameter editHeight = new RealParameter("25.0");
-        RealParameter editDuration = new RealParameter("2.0");
+	RealScalarParam<NonNegativeReal> silencingRate = new RealScalarParam<>(0.04, NonNegativeReal.INSTANCE);
+	RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{10.0, 20.0}, NonNegativeReal.INSTANCE);
+	RealScalarParam<PositiveReal> editHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+	RealScalarParam<PositiveReal> editDuration = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
-        Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs,
-                "estimate", false);
+
+	SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
+	Frequencies frequencies = new Frequencies();
+	frequencies.initByName("frequencies", freqs,
+			       "estimate", false);
+      
 
         editModel = new EditAndSilencingModel();
         editModel.initByName("editRates", scarRates,
@@ -198,15 +209,15 @@ public class EditAndSilencingModelTest {
     public void test_different_parameters2(){
 
         //set up scarring model
-        RealParameter silencingRate = new RealParameter("0.0");
-        RealParameter scarRates = new RealParameter("10");
-        RealParameter editHeight = new RealParameter("25.0");
-        RealParameter editDuration = new RealParameter("2.0");
+	RealScalarParam<NonNegativeReal> silencingRate = new RealScalarParam<>(0.0, NonNegativeReal.INSTANCE);
+	RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{10.0}, NonNegativeReal.INSTANCE);
+	RealScalarParam<PositiveReal> editHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+	RealScalarParam<PositiveReal> editDuration = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
-        Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs,
-                "estimate", false);
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
+	Frequencies frequencies = new Frequencies();
+	frequencies.initByName("frequencies", freqs,
+			       "estimate", false);
 
         editModel = new EditAndSilencingModel();
         editModel.initByName("editRates", scarRates,
@@ -252,16 +263,16 @@ public class EditAndSilencingModelTest {
     @Test
     public void test_clock_rate(){
 
-        //set up scarring model
-        RealParameter silencingRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("10");
-        RealParameter editHeight = new RealParameter("25.0");
-        RealParameter editDuration = new RealParameter("2.0");
+	//set up scarring model
+	RealScalarParam<NonNegativeReal> silencingRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+	RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{10.0}, NonNegativeReal.INSTANCE);
+	RealScalarParam<PositiveReal> editHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+	RealScalarParam<PositiveReal> editDuration = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
-        Frequencies frequencies = new Frequencies();
-        frequencies.initByName("frequencies", freqs,
-                "estimate", false);
+	SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
+	Frequencies frequencies = new Frequencies();
+	frequencies.initByName("frequencies", freqs,
+			       "estimate", false);
 
         editModel = new EditAndSilencingModel();
         editModel.initByName("editRates", scarRates,
