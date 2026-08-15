@@ -38,7 +38,7 @@ public class EditAndSilencingModel extends Base {
         public Input<RealScalar<PositiveReal>> editHeightInput = new Input<>("editHeight",
                 "Duration between the onset of edit and sampling of the cells", Input.Validate.REQUIRED);
 
-        public Input<RealScalar<PositiveReal>> editDurationInput = new Input<>("editDuration",
+        public Input<RealScalar<NonNegativeReal>> editDurationInput = new Input<>("editDuration",
                 "Duration of the edit process", Input.Validate.REQUIRED);
 
 

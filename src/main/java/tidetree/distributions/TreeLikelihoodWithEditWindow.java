@@ -2,7 +2,8 @@ package tidetree.distributions;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.type.RealScalar;
+import beast.base.spec.domain.PositiveReal;
 import beast.base.core.Log;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.branchratemodel.BranchRateModel;
@@ -11,7 +12,7 @@ import beast.base.evolution.likelihood.GenericTreeLikelihood;
 import beast.base.evolution.likelihood.LikelihoodCore;
 import beast.base.evolution.likelihood.TreeLikelihood;
 import beast.base.evolution.sitemodel.SiteModel;
-import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeInterface;
@@ -26,7 +27,7 @@ import java.util.Arrays;
         "an editing model")
 public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
 
-    public Input<RealParameter> originInput = new Input<>("origin",
+    public Input<RealScalar<PositiveReal>> originInput = new Input<>("origin",
             "Start of the cell division process, usually start of the experiment.",
             Input.Validate.OPTIONAL);
     final public Input<Frequencies> rootFrequenciesInput =
@@ -48,7 +49,7 @@ public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
     protected double editStop;
     protected SiteModel.Base m_siteModel;
     protected BranchRateModel.Base branchRateModel;
-    protected RealParameter origin;
+    protected RealScalar<PositiveReal> origin;
     protected boolean useOrigin = false;
     protected Node originNode;
 
@@ -241,7 +242,7 @@ public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
             Node parent = node.getParent();
             if(node.isRoot()){
                 parent= new Node();
-                parent.setHeight(origin.getValue());
+                parent.setHeight(origin.get());
             }
 
             likelihoodCore.setNodeMatrixForUpdate(nodeIndex);
@@ -306,7 +307,7 @@ public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
                 if (node.isRoot()) {
                     // calculate the partials until the origin
                     if (useOrigin){
-                        Double originHeight = origin.getValue();
+                        Double originHeight = origin.get();
                         originNode = new Node();
                         originNode.setHeight(originHeight);
                         originNode.setNr(node.getNr() + 1);
@@ -433,7 +434,7 @@ public class TreeLikelihoodWithEditWindow extends GenericTreeLikelihood {
             return -10.0;
         }
         if(useOrigin) {
-            Double originHeight = origin.getValue();
+            Double originHeight = origin.get();
             if (tree.getRoot().getHeight() >= originHeight) {
                 return Double.NEGATIVE_INFINITY;
             }

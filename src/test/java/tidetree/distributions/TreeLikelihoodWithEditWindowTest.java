@@ -1,11 +1,16 @@
 package tidetree.distributions;
 
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.inference.parameter.SimplexParam;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.NonNegativeReal;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.branchratemodel.StrictClockModel;
 import beast.base.evolution.sitemodel.SiteModel;
-import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeParser;
@@ -35,12 +40,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -83,12 +88,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -148,12 +153,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -215,12 +220,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -278,12 +283,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("2.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -345,13 +350,13 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("2.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
         //RealParameter scarRates = new RealParameter("0.0 0.0");
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -411,16 +416,16 @@ public class TreeLikelihoodWithEditWindowTest {
 
 
         // init scarring model
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
 
-        RealParameter scarringHeight = new RealParameter("100.0");
-        RealParameter scarringDuration = new RealParameter("100.0");
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(100.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(100.0, NonNegativeReal.INSTANCE);
         EditAndSilencingModel scarringModel4 = new EditAndSilencingModel();
-        scarringModel4.initByName("editRates", new RealParameter("0.01 0.01"),
-                "silencingRate", new RealParameter("0.01"),
+        scarringModel4.initByName("editRates", new RealVectorParam<>(new double[]{0.01, 0.01}, NonNegativeReal.INSTANCE),
+                "silencingRate", new RealScalarParam<>(0.01, NonNegativeReal.INSTANCE),
                 "editHeight", scarringHeight,
                 "editDuration", scarringDuration, "frequencies", frequencies);
 
@@ -461,16 +466,16 @@ public class TreeLikelihoodWithEditWindowTest {
 
 
         // init scarring model
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("0.0");
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(0.0, NonNegativeReal.INSTANCE);
 
         EditAndSilencingModel scarringModel4 = new EditAndSilencingModel();
-        scarringModel4.initByName("editRates", new RealParameter("0.01 0.01"),
-                "silencingRate", new RealParameter("0.01"),
+        scarringModel4.initByName("editRates", new RealVectorParam<>(new double[]{0.01, 0.01}, NonNegativeReal.INSTANCE),
+                "silencingRate", new RealScalarParam<>(0.01, NonNegativeReal.INSTANCE),
                 "editHeight", scarringHeight,
                 "editDuration", scarringDuration, "frequencies", frequencies);
 
@@ -490,11 +495,11 @@ public class TreeLikelihoodWithEditWindowTest {
 
         //-------------------------------------------------------------------------------------------------------//
 
-        scarringHeight.setValue(30.0);
-        scarringDuration.setValue(2.0);
+        scarringHeight.set(30.0);
+        scarringDuration.set(2.0);
         EditAndSilencingModel scarringModel4b = new EditAndSilencingModel();
-        scarringModel4b.initByName("editRates", new RealParameter("0.01 0.01"),
-                "silencingRate", new RealParameter("0.01"),
+        scarringModel4b.initByName("editRates", new RealVectorParam<>(new double[]{0.01, 0.01}, NonNegativeReal.INSTANCE),
+                "silencingRate", new RealScalarParam<>(0.01, NonNegativeReal.INSTANCE),
                 "editHeight", scarringHeight,
                 "editDuration", scarringDuration, "frequencies", frequencies);
 
@@ -532,12 +537,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -585,12 +590,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.02");
-        RealParameter scarRates = new RealParameter("1 1");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.02, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -643,12 +648,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.02");
-        RealParameter scarRates = new RealParameter("1 1");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.02, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -723,12 +728,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.02");
-        RealParameter scarRates = new RealParameter("1 1");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.02, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -803,7 +808,7 @@ public class TreeLikelihoodWithEditWindowTest {
         Sequence d = new Sequence("3", "2,1");
         Sequence e = new Sequence("4", "3,3");
 
-        RealParameter origin = new RealParameter("42");
+        RealScalarParam<PositiveReal> origin = new RealScalarParam<>(42, PositiveReal.INSTANCE);
 
         Alignment alignment = new Alignment();
         alignment.initByName("sequence", a, "sequence", b, "sequence", c, "sequence", d, "sequence", e, "dataType", "integer", "statecount", 4);
@@ -816,12 +821,12 @@ public class TreeLikelihoodWithEditWindowTest {
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter lossRate = new RealParameter("0.02");
-        RealParameter scarRates = new RealParameter("1 1");
-        RealParameter scarringHeight = new RealParameter("25.0");
-        RealParameter scarringDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> lossRate = new RealScalarParam<>(0.02, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> scarringHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<NonNegativeReal> scarringDuration = new RealScalarParam<>(2.0, NonNegativeReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
