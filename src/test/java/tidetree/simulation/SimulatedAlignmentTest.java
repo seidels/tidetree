@@ -1,11 +1,16 @@
 package tidetree.simulation;
 
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.inference.parameter.SimplexParam;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.NonNegativeReal;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.branchratemodel.StrictClockModel;
 import beast.base.evolution.sitemodel.SiteModel;
-import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeParser;
 import tidetree.substitutionmodel.EditAndSilencingModel;
@@ -32,12 +37,12 @@ public class SimulatedAlignmentTest{
                 "adjustTipHeights", false, "offset", 0);
 
         //init scarring model
-        RealParameter silencingRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter editHeight = new RealParameter("25.0");
-        RealParameter editDuration = new RealParameter("2.0");
+        RealScalarParam<NonNegativeReal> silencingRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> editHeight = new RealScalarParam<>(25.0, PositiveReal.INSTANCE);
+        RealScalarParam<PositiveReal> editDuration = new RealScalarParam<>(2.0, PositiveReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -91,12 +96,12 @@ public class SimulatedAlignmentTest{
                 "adjustTipHeights", false, "offset", 0);
 
         //init edit model
-        RealParameter silencingRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter editHeight = new RealParameter("3.0");
-        RealParameter editDuration = new RealParameter("3.0");
+        RealScalarParam<NonNegativeReal> silencingRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> editHeight = new RealScalarParam<>(3.0, PositiveReal.INSTANCE);
+        RealScalarParam<PositiveReal> editDuration = new RealScalarParam<>(3.0, PositiveReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -142,12 +147,12 @@ public class SimulatedAlignmentTest{
                 "adjustTipHeights", false, "offset", 0);
 
         //init edit model
-        RealParameter silencingRate = new RealParameter("0.2");
-        RealParameter scarRates = new RealParameter("1.0 1.0");
-        RealParameter editHeight = new RealParameter("5.0");
-        RealParameter editDuration = new RealParameter("3.0");
+        RealScalarParam<NonNegativeReal> silencingRate = new RealScalarParam<>(0.2, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{1.0, 1.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> editHeight = new RealScalarParam<>(5.0, PositiveReal.INSTANCE);
+        RealScalarParam<PositiveReal> editDuration = new RealScalarParam<>(3.0, PositiveReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);
@@ -193,12 +198,12 @@ public class SimulatedAlignmentTest{
         scarDat.initByName("nrOfStates", 3);
 
         //init edit model
-        RealParameter silencingRate = new RealParameter("0.0");
-        RealParameter scarRates = new RealParameter("10.0");
-        RealParameter editHeight = new RealParameter("4.0");
-        RealParameter editDuration = new RealParameter("3.0");
+        RealScalarParam<NonNegativeReal> silencingRate = new RealScalarParam<>(0.0, NonNegativeReal.INSTANCE);
+        RealVectorParam<NonNegativeReal> scarRates = new RealVectorParam<>(new double[]{10.0}, NonNegativeReal.INSTANCE);
+        RealScalarParam<PositiveReal> editHeight = new RealScalarParam<>(4.0, PositiveReal.INSTANCE);
+        RealScalarParam<PositiveReal> editDuration = new RealScalarParam<>(3.0, PositiveReal.INSTANCE);
 
-        RealParameter freqs = new RealParameter("1.0 0 0");
+        SimplexParam freqs = new SimplexParam(new double[]{1.0, 0.0, 0.0});
         Frequencies frequencies = new Frequencies();
         frequencies.initByName("frequencies", freqs,
                 "estimate", false);

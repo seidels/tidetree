@@ -20,7 +20,9 @@ package tidetree.simulation;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.type.RealScalar;
+
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.alignment.TaxonSet;
@@ -57,7 +59,7 @@ public class SimulatedAlignment extends Alignment {
             "Tree down which to simulate sequence evolution.",
             Input.Validate.REQUIRED);
 
-    public Input<RealParameter> originInput = new Input<>(
+    public Input<RealScalar<PositiveReal>> originInput = new Input<>(
             "origin", "Start of the process, usually the experiment",
             Input.Validate.OPTIONAL);
 
@@ -100,7 +102,7 @@ public class SimulatedAlignment extends Alignment {
         tree = treeInput.get();
         if (originInput.get() != null){
             useOrigin = Boolean.TRUE;
-            originHeight = originInput.get().getValue();
+            originHeight = originInput.get().get();
         }
 
         siteModel = siteModelInput.get();
