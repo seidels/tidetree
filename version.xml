@@ -1,7 +1,6 @@
-<package name="tidetree" version="1.0.0">
-  <depends on="BEAST.base" atleast="2.7.0"/>
-  <depends on="BEAST.app" atleast="2.7.0"/>
-  <depends on="feast" atleast="10.0.0"/>
+<package name="tidetree" version="1.0.2">
+  <depends on="BEAST.base" atleast="2.8.0"/>
+  <depends on="feast" atleast="11.0.1"/>
 
   <service type="beast.base.core.BEASTInterface">
     <provider classname="tidetree.evolution.datatype.EditData"/>
@@ -13,6 +12,6 @@
   </service>
 
   <service type="beastfx.app.inputeditor.AlignmentImporter">
-    <provider classname="tidetree.util.NexusImporter"/>
+    <provider classname="tidetree.app.beauti.NexusImporter"/>
   </service>
 </package>
