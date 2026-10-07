@@ -17,13 +17,10 @@ If you want to apply TiDeTree to your data, check out the tutorial [here](https:
    Download and install BEAST 3 from the [BEAST 3 repository](https://github.com/CompEvol/beast3). It requires Java 25.
 
 2. **Install TiDeTree**  
-   In **BEAUti**, go to **File > Manage Packages**, click **Install from Maven**, and enter:  
-   ```
-   io.github.seidels:tidetree:2.0.0
-   ```
+   In **BEAUti**, go to **File > Manage Packages**, select **tidetree** and click **Install**.  
    Alternatively, from the command line:
    ```
-   packagemanager -maven io.github.seidels:tidetree:2.0.0
+   packagemanager -add tidetree
    ```
    Restart **BEAUti** to complete the installation.
 
