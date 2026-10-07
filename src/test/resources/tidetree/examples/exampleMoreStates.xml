@@ -1,26 +1,16 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<beast beautitemplate='MultiTypeBirthDeath' beautistatus=''
-       namespace="beast.pkgmgmt
-       :beast.base.core
-       :beast.base.inference
-       :beast.base.evolution.alignment
-       :beast.base.evolution.tree.coalescent
-       :beast.base.core
-       :beast.base.inference.util
-       :beast.evolution.nuc
-       :beast.base.evolution.operator
-       :beast.base.inference.operator
-       :beast.base.evolution.sitemodel
-       :beast.base.evolution.substitutionmodel
-       :tidetree
-       :beast.base.evolution.likelihood" required="" version="2.7">
+<?xml version='1.0' encoding='UTF-8'?>
+<beast version="2.8"
+       namespace="beast.core:beast.core.util:beast.evolution.alignment:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.tree.coalescent:beast.base.core:beast.base.evolution.alignment:beast.base.evolution.likelihood:beast.base.evolution.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.tree:beast.base.evolution.tree.coalescent:beast.base.inference:beast.base.inference.operator:beast.base.inference.util:beast.pkgmgmt"
+       beautitemplate="MultiTypeBirthDeath"
+       beautistatus=""
+       required="">
 
 <!--
 This is an example xml that can be adapted to use TiDeTree on your data.
 In this example, a population of cells was grown for 54h. Editing was induced from
 time point 0 for 36h and 10 cells were sampled.
 
-Running the analysis infers the tree linking the 10 cells and the cells' division and death rate.
+Running the analysis infers the tree linking the 10 cells and the cells' division rate.
 
 Note that some words in this xml refer to time flowing either forward or backward.
 Forward time is used to count the hours from the start of the experiment (so some time in the past)
@@ -31,21 +21,10 @@ scarring started.
 -->
 
 <!-- syntactic sugar -->
-<map name="Uniform" >beast.base.inference.distribution.Uniform</map>
-<map name="Exponential" >beast.base.inference.distribution.Exponential</map>
-<map name="LogNormal" >beast.base.inference.distribution.LogNormalDistributionModel</map>
-<map name="Normal" >beast.base.inference.distribution.Normal</map>
-<map name="Beta" >beast.base.inference.distribution.Beta</map>
-<map name="Gamma" >beast.base.inference.distribution.Gamma</map>
-<map name="LaplaceDistribution" >beast.base.inference.distribution.LaplaceDistribution</map>
-<map name="prior" >beast.base.inference.distribution.Prior</map>
-<map name="InverseGamma" >beast.base.inference.distribution.InverseGamma</map>
-<map name="OneOnX" >beast.base.inference.distribution.OneOnX</map>
 
 <!-- input data -->
-<data  id="s1_c1_data.txt" spec="Alignment" name="alignment">
-    <userDataType spec="tidetree.evolution.datatype.EditData"
-                     nrOfStates="4" />
+<data id="s1_c1_data.txt" spec="Alignment" name="alignment">
+    <userDataType spec="tidetree.evolution.datatype.EditData" nrOfStates="4"/>
 <sequence id="cell_1" spec="Sequence" taxon="1" value="1,2,0,1,1,0,1,2,1,3,"/>
 <sequence id="cell_2" spec="Sequence" taxon="2" value="1,0,0,1,1,0,1,2,1,3,"/>
 <sequence id="cell_3" spec="Sequence" taxon="3" value="1,0,0,1,1,0,1,2,1,0,"/>
@@ -63,113 +42,77 @@ scarring started.
 </taxa>
 
 <!-- specify tip dates, here 54h after the start of the experiment -->
-<traitSet id="dateTrait" spec="beast.base.evolution.tree.TraitSet" taxa="@TaxonSet" traitname="date-forward"
-	  value="1=54,2=54,3=54,4=54,5=54,6=54,7=54,8=54,9=54"/>
+<traitSet id="dateTrait" spec="beast.base.evolution.tree.TraitSet" taxa="@TaxonSet" traitname="date-forward" value="1=54,2=54,3=54,4=54,5=54,6=54,7=54,8=54,9=54"/>
 
-
-  <substModel id="substModel"
-               spec="tidetree.substitutionmodel.EditAndSilencingModel"
-               editRates="@editRate" silencingRate="@silencingRate"
-               editHeight="54" editDuration="36">
-    <frequencies spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1 0 0 0" estimate="false"/>
+  <substModel id="substModel" spec="tidetree.substitutionmodel.EditAndSilencingModel" editRates="@editRate" silencingRate="@silencingRate" editHeight="54" editDuration="36">
+    <frequencies id="freqs" spec="beast.base.spec.evolution.substitutionmodel.Frequencies">
+        <frequencies spec="beast.base.spec.inference.parameter.SimplexParam" value="1 0 0 0" estimate="false"/>
+    </frequencies>
   </substModel>
 
-  <siteModel spec="SiteModel" id="siteModel" mutationRate="@mutationRate" proportionInvariant="@proportionInvariant"
-              gammaCategoryCount="0" substModel="@substModel">
+  <siteModel spec="beast.base.spec.evolution.sitemodel.SiteModel" id="siteModel" mutationRate="@mutationRate" proportionInvariant="@proportionInvariant" gammaCategoryCount="0" substModel="@substModel">
   </siteModel>
-
 
 <run id="mcmc" spec="MCMC" chainLength="1000000000">
 
     <!-- here the parameter of the model are defined that will be operated on (i.e. estimated) during the MCMC -->
     <state id="state" spec="State" storeEvery="5000">
-            <stateNode id="tree" spec="tidetree.tree.StartingTree" rootHeight="54"
-                       taxa="@s1_c1_data.txt" editHeight="54"
-                       editDuration="36" sequencesAreClustered="false">
+            <stateNode id="tree" spec="tidetree.tree.StartingTree" rootHeight="54" taxa="@s1_c1_data.txt" editHeight="54" editDuration="36" sequencesAreClustered="false">
                 <trait idref="dateTrait"/>
                 <taxonset idref="TaxonSet"/>
             </stateNode>
 
         <!-- find the definition of the scarring, loss rate and clock rate in the TiDeTree manuscript -->
-          <parameter id="editRate" spec="parameter.RealParameter"
-		     dimension="1" lower="0.0" name="stateNode"
-		     upper="1000"> 0.8 0.1 0.1
+          <parameter id="editRate" dimension="1" name="stateNode" spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal"> 0.8 0.1 0.1
           </parameter>
-        <parameter id="silencingRate" spec="parameter.RealParameter" dimension="1"
-                   lower="0.0" name="stateNode" upper="1000"> 0.0</parameter>
+        <parameter id="silencingRate" name="stateNode" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="NonNegativeReal"> 0.0</parameter>
 
         <!-- the clock rate is the rate of acquiring edited state 2  -->
-        <parameter id="clockRate.c" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
+        <parameter id="clockRate.c" name="stateNode" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real">1.0</parameter>
         <!-- the mutation rate could be another rate multiplier, but we leave it fixed to 1 -->
-        <parameter spec="parameter.RealParameter" estimate="false" id="mutationRate" name="stateNode">1.0</parameter>
+        <parameter estimate="false" id="mutationRate" name="stateNode" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal">1.0</parameter>
 
-        <parameter spec="parameter.RealParameter" estimate="false" lower="0.0" id="proportionInvariant"
-                   name="stateNode" upper="1.0">0.0</parameter>
+        <parameter estimate="false" id="proportionInvariant" name="stateNode" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="UnitInterval">0.0</parameter>
 
-        <!-- the following parameters belong to the extended birth-death sampling model by Stadler2013 -->
+        <!-- the following parameters belong to the Yule (pure-birth) tree prior -->
         <!-- birth rate corresponds to cell division rate -->
-        <parameter id="birthRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="5">0.6</parameter>
-        <!-- death rate corresponds to apoptosis rate -->
-        <parameter id="deathRate" spec="parameter.RealParameter" dimension="1" lower="0.0" name="stateNode" upper="5">0.01</parameter>
-        <!-- sampling rate is a rate of sampling through time; since cells are only collected at single time point we set
-        this to 0 and specify the sampling proportion at present: rho -->
-        <parameter id="samplingRate" spec="parameter.RealParameter" lower="0.0" name="stateNode"
-		   upper="1.0"> 0 </parameter>
-        <parameter id="rho" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0"> 1.0</parameter>
+        <parameter id="birthRate" name="stateNode" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal">0.6</parameter>
 
         <!-- The origin is the start of the population process (see Stadler2013), i.e. in most applications the time that passed
          from the start of the experiment until the cells are sequenced. Here this is 54h. -->
-        <parameter id="origin" spec="parameter.RealParameter" name="stateNode" upper="54.0001">54.001</parameter>
+        <parameter id="origin" name="stateNode" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real">54.001</parameter>
 
     </state>
-
-
 
     <distribution id="posterior" spec="beast.base.inference.CompoundDistribution">
 
         <!-- Prior distributions -->
         <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
 
-            <!-- The tree prior (or population dynamic model): the birth death sampling model -->
-                <distribution id="birthDeathSamplingModel" spec="bdsky.evolution.speciation.BirthDeathSkylineModel"
-                          conditionOnSurvival="True" tree="@tree" origin="@origin" contemp="true"
-                          birthRate="@birthRate" deathRate="@deathRate" rho="@rho"
-                          samplingRate="@samplingRate" >
+            <!-- The tree prior (or population dynamic model): the Yule (pure-birth) model -->
+                <distribution id="yuleModel" spec="beast.base.spec.evolution.speciation.YuleModel" conditionalOnRoot="False" tree="@tree" originHeight="@origin" birthDiffRate="@birthRate">
                 </distribution>
 
             <!-- prior distributions on the substitution model parameters -->
-            <prior id="editRatePrior" name="distribution" x="@editRate">
-                <LogNormal name="distr">
-                  <parameter  spec="parameter.RealParameter" estimate="false" name="M">-4.0</parameter>
-                  <parameter  spec="parameter.RealParameter" estimate="false" lower="0.0" name="S" upper="20.0">1.0</parameter>
-                </LogNormal>
-            </prior>
+            <distribution id="editRatePrior" spec="beast.base.spec.inference.distribution.IID" param="@editRate">
+                <distr spec="beast.base.spec.inference.distribution.LogNormal">
+                  <parameter estimate="false" name="M" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real">-4.0</parameter>
+                  <parameter estimate="false" name="S" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal">1.0</parameter>
+                </distr>
+            </distribution>
 
-            <prior id="ClockPrior.c:LTv2_EBd32_cluster_1" name="distribution" x="@clockRate.c">
-                <Uniform id="Uniform.0" name="distr" upper="Infinity"/>
-            </prior>
-
+            <distribution id="Uniform.0" spec="beast.base.spec.inference.distribution.Uniform" param="@clockRate.c" upper="1.0E6"/>
 
             <!-- prior distributions on phylodynamic parameters -->
             <!-- [0.4, 2.7] -->
-            <prior id="birthRatePrior" name="distribution" x="@birthRate">
-                <LogNormal name="distr" M="0" S="0.6"/>
-            </prior>
-            <!-- [0.01, 1.4] -->
-            <prior id="deathRatePrior" name="distribution" x="@deathRate">
-               <LogNormal name="distr" M="-2" S="1.4"/>
-            </prior>
+            <distribution id="birthRatePrior" spec="beast.base.spec.inference.distribution.LogNormal" param="@birthRate" M="0" S="0.6"/>
         </distribution>
 
         <!-- Tree likelihood -->
         <distribution id="likelihood" spec="beast.base.inference.CompoundDistribution">
 
-                <distribution id="treeLikelihood"
-                              spec="tidetree.distributions.TreeLikelihoodWithEditWindow"
-                              data="@s1_c1_data.txt" origin="@origin"
-			      tree="@tree"
-			      siteModel="@siteModel">
-                    <branchRateModel spec="beast.base.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c"/>
+                <distribution id="treeLikelihood" spec="tidetree.distributions.TreeLikelihoodWithEditWindow" data="@s1_c1_data.txt" origin="@origin" tree="@tree" siteModel="@siteModel">
+                    <branchRateModel spec="beast.base.spec.evolution.branchratemodel.StrictClockModel" clock.rate="@clockRate.c"/>
                 </distribution>
 
         </distribution>
@@ -179,30 +122,19 @@ scarring started.
            <!-- operator  spec="tidetree.operators.WilsonBaldingSubTrees"
                       tree="@tree" weight="30.0" scarringStopHeight="18"/ -->
 
-            <operator  spec="Uniform" tree="@tree" weight="30.0"/>
+            <operator tree="@tree" weight="30.0" spec="beast.base.evolution.operator.Uniform"/>
 
-            <operator  spec="SubtreeSlide" tree="@tree" weight="3.0"/>
-            <operator spec="SubtreeSlide" tree="@tree" weight="3.0" size="30"/>
-            <operator  spec="Exchange" isNarrow="false" tree="@tree" weight="30.0"/>
-
+            <operator spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" tree="@tree" weight="3.0"/>
+            <operator spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" tree="@tree" weight="3.0" size="30"/>
+            <operator spec="Exchange" isNarrow="false" tree="@tree" weight="30.0"/>
 
 	<!-- Operators on phylogenetic parameters-->
 	<!-- operator on edit probabilities while keeping their sum fixed to 1 -->
-	  <operator id="editRateScaler" spec="DeltaExchangeOperator" parameter="@editRate"
-                 weight="3.0"/>
-    <operator id="clockRateScaler" spec="ScaleOperator" parameter="@clockRate.c"
-              scaleFactor="0.8" weight="3.0"/>
-
+	  <operator id="editRateScaler" spec="beast.base.spec.inference.operator.DeltaExchangeOperator" parameter="@editRate" weight="3.0"/>
+    <operator id="clockRateScaler" parameter="@clockRate.c" scaleFactor="0.8" weight="3.0" spec="beast.base.spec.inference.operator.ScaleOperator"/>
 
    <!-- Operators on phylodynamic parameters -->
-    <operator id="birthRateScaler" spec="ScaleOperator" parameter="@birthRate" scaleFactor="0.8" weight="3.0"/>
-    <operator id="deathRateScaler" spec="ScaleOperator" parameter="@deathRate" scaleFactor="0.8" weight="3.0"/>
-
-    <operator id="updownBD.t:LTv2_EBd32_cluster_1" spec="UpDownOperator" scaleFactor="0.8" weight="30.0">
-         <up idref="birthRate"/>
-         <down idref="deathRate"/>
-    </operator>
-
+    <operator id="birthRateScaler" parameter="@birthRate" scaleFactor="0.8" weight="3.0" spec="beast.base.spec.inference.operator.ScaleOperator"/>
 
     <!-- Log parameters -->
     <logger id="tracelog" spec="Logger" fileName="$(filebase).$(seed).log" logEvery="10000">
@@ -210,30 +142,24 @@ scarring started.
         <log idref="likelihood"/>
         <log idref="prior"/>
         <log idref="treeLikelihood"/>
-        <log id="treeHeight"
-                 spec="beast.base.evolution.tree.TreeHeightLogger"
-                 tree="@tree"/>
+        <log id="treeHeight" spec="beast.base.evolution.tree.TreeStatLogger" tree="@tree"/>
         <log idref="editRate"/>
-        <log idref="silencingRate" />
+        <log idref="silencingRate"/>
         <log idref="clockRate.c"/>
         <log idref="birthRate"/>
-        <log idref="rho"/>
-        <log idref="deathRate"/>
     </logger>
 
     <logger id="screenlog" spec="Logger" logEvery="1000">
         <log idref="posterior"/>
-        <log id="ESS.0" spec="util.ESS" arg="@posterior"/>
+        <log id="ESS.0" spec="beast.base.spec.inference.util.ESS" arg="@posterior"/>
         <log idref="likelihood"/>
         <log idref="prior"/>
     </logger>
-
 
     <!-- log tree -->
     <logger id="treelog.t:cluster" spec="Logger" fileName="$(filebase).$(tree).$(seed).trees" logEvery="10000" mode="tree">
                 <log idref="tree" printMetaData="true"/>
     </logger>
-
 
 </run>
 
