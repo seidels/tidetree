@@ -1,35 +1,31 @@
 TiDeTree
 ========
 
-TiDeTree is a [BEAST 2](https://www.beast2.org/) package that enables inference of time-scaled single-cell phylogenies and population dynamic parameters such as cell division, death, and differentiation rates from genetic lineage tracing data.
+TiDeTree is a [BEAST 3](https://github.com/CompEvol/beast3) package that enables inference of time-scaled single-cell phylogenies and population dynamic parameters such as cell division, death, and differentiation rates from genetic lineage tracing data.
+
+TiDeTree 2.0 requires BEAST 3. For BEAST 2, use the [`beast-2.8-compat`](https://github.com/seidels/tidetree/tree/beast-2.8-compat) branch.
 
 For further information please check out our [publication](https://doi.org/10.1098/rspb.2022.1844) or [preprint](https://doi.org/10.1101/2022.02.14.480422) and find the code to reproduce the analyses in [this GitHub repo](https://github.com/seidels/tidetree-material).
 
 
-If you want to apply TiDeTree to your data, check out the tutorial [here](https://taming-the-beast.org/tutorials/TiDeTree-Tutorial/). If you are comfortable with BEAST xml hacking, take a look at the example XML file in the examples directory. For general guidance on setting prior distributions on parameters, look at [this BEAST2 tutorial](https://taming-the-beast.org/tutorials/Prior-selection/).
+If you want to apply TiDeTree to your data, check out the tutorial [here](https://taming-the-beast.org/tutorials/TiDeTree-Tutorial/). If you are comfortable with BEAST xml hacking, take a look at the example XML files in [`src/test/resources/tidetree/examples`](src/test/resources/tidetree/examples). For general guidance on setting prior distributions on parameters, look at [this BEAST2 tutorial](https://taming-the-beast.org/tutorials/Prior-selection/).
 
 
 ## Installation
 
-1. **Install BEAST 2**  
-   Download and install BEAST 2 by following the instructions on the [official BEAST 2 website](https://www.beast2.org/).
+1. **Install BEAST 3**  
+   Download and install BEAST 3 from the [BEAST 3 repository](https://github.com/CompEvol/beast3). It requires Java 25.
 
-2. **Add TiDeTree to the Package Manager**  
-   To install TiDeTree via BEAUTi:
-
-   - Open **BEAUTi**.
-   - Go to **File > Manage Packages**.
-   - Under **Package Repositories**, click **Add URL**, and enter:  
-     ```
-     https://raw.githubusercontent.com/seidels/tidetree/main/package.xml
-     ```
-
-   This will add TiDeTree to the list of available packages.
-
-3. **Install TiDeTree**  
-   - Return to the list of available packages.
-   - Select **TiDeTree** and click **Install**.
-   - Close and reopen **BEAUTi** to complete the installation.
+2. **Install TiDeTree**  
+   In **BEAUti**, go to **File > Manage Packages**, click **Install from Maven**, and enter:  
+   ```
+   io.github.seidels:tidetree:2.0.0
+   ```
+   Alternatively, from the command line:
+   ```
+   packagemanager -maven io.github.seidels:tidetree:2.0.0
+   ```
+   Restart **BEAUti** to complete the installation.
 
 **You're all set to run analyses with TiDeTree!**
 
@@ -42,7 +38,7 @@ For a mini tutorial, please read on.
 Mini Tutorial
 ------------
 
-You can either set up your analyses using the graphical user interface BEAUTI, or, if you are more familiar with BEAST xml already, by editing the examle.xml provided within the ./examples folder.
+You can either set up your analyses using the graphical user interface BEAUTI, or, if you are more familiar with BEAST xml already, by editing the example.xml provided in the `src/test/resources/tidetree/examples` folder.
 
 
 ### Parameter choices
@@ -71,7 +67,7 @@ For example, let the entire experiment take 100 hours. Editing is induced after 
    Open **BEAUTi** and go to **File > Template > tidetree**. This sets the analysis format for TiDeTree analyses.
 
 2. **Load Your Alignment**  
-   Import your data via **File > Import Alignment**, and select your `.tidetree` file (e.g., `./examples/example.tidetree`).
+   Import your data via **File > Import Alignment**, and select your `.tidetree` file (e.g., `src/test/resources/tidetree/examples/example_data.tidetree`).
 
 3. **Specify Tip Dates**  
    Navigate to the **Tip Dates** panel and check **Use Tip dates**.  
@@ -100,7 +96,7 @@ For example, let the entire experiment take 100 hours. Editing is induced after 
 
 10. **Save and Run**  
     Save your analysis via **File > Save As**, which will generate an `.xml` file.  
-    Run this file with **BEAST 2**.
+    Run this file with **BEAST 3**.
 
 
 ### Setting up the editing model via modifying the XML
@@ -109,13 +105,13 @@ So how do we put this into our BEAST XML? We specify starting values for the clo
 
 ```XML
 <!-- the clock rate  -->
-<parameter id="clockRate.c" spec="parameter.RealParameter" name="stateNode">
+<parameter id="clockRate.c" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" name="stateNode">
  1.0
 </parameter>
 
 
 <!--the editing rates -->
-<parameter id="editRate" spec="parameter.RealParameter" lower="0.0" name="stateNode">
+<parameter id="editRate" spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal" name="stateNode">
  0.8 0.1 0.1
 </parameter>
         
@@ -127,6 +123,8 @@ These parameters are then used by the editing model (see the "@editRate" notatio
                spec="tidetree.substitutionmodel.EditAndSilencingModel"
                editRates="@editRate" silencingRate="@silencingRate"
                editHeight="54" editDuration="36">
-    <frequencies spec="beast.base.evolution.substitutionmodel.Frequencies" frequencies="1 0 0 0" estimate="false"/>
+    <frequencies spec="beast.base.spec.evolution.substitutionmodel.Frequencies">
+        <frequencies spec="beast.base.spec.inference.parameter.SimplexParam" value="1 0 0 0" estimate="false"/>
+    </frequencies>
   </substModel>
 ```
